@@ -58,18 +58,18 @@ class GreenvilleChamber(Driver):
 
     def get_events(self):
         self.driver.get(self.url)
-        n = 0
-        n_events = len(self.get_calendar_data())
+        day = 0
+        n_days = len(self.get_calendar_data())
 
-        while n < n_events - 1:
+        while day < n_days - 1:
             # This is a nested list. Each item in list is a day.
-            calendar_data = self.get_calendar_data()
+            events_per_day = self.get_calendar_data()
 
             # These are the events on the 'nth' day.
-            events = calendar_data[n].find_elements(By.CSS_SELECTOR, "a")
+            events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
 
             if len(events) == 0:
-                n += 1
+                day += 1
                 continue
             else:
                 for i in range(len(events)):
@@ -81,10 +81,10 @@ class GreenvilleChamber(Driver):
                     self.events.append(event_dict)
                     self.go_back()
 
-                    calendar_data = self.get_calendar_data()
-                    events = calendar_data[n].find_elements(By.CSS_SELECTOR, "a")
+                    events_per_day = self.get_calendar_data()
+                    events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
                     i += 0
 
-                n += 1
+                day += 1
 
         self.driver.quit()
