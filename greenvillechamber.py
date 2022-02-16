@@ -11,7 +11,7 @@ class GreenvilleChamber(Driver):
         self.events = []
 
     def go_to_next_month(self):
-        next_button = self.driver.find_element(By.CSS_SELECTOR, "td.nextLink")
+        next_button = self.driver.find_element(By.CSS_SELECTOR, "a span.fa-chevron-circle-right")
         next_button.click()
 
     def get_calendar_data(self):
@@ -58,33 +58,43 @@ class GreenvilleChamber(Driver):
 
     def get_events(self):
         self.driver.get(self.url)
-        day = 0
-        n_days = len(self.get_calendar_data())
 
-        while day < n_days - 1:
-            # This is a nested list. Each item in list is a day.
-            events_per_day = self.get_calendar_data()
+        month = 0
+        max_month = 3
 
-            # These are the events on the 'nth' day.
-            events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
+        while month < max_month:
+            day = 0
+            n_days = len(self.get_calendar_data())
 
-            if len(events) == 0:
+            while day < n_days - 1:
+                # This is a nested list. Each item in list is a day.
+                events_per_day = self.get_calendar_data()
+
+                # These are the events on the 'nth' day.
+                events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
+
+                if len(events) == 0:
+                    day += 1
+                    continue
+                else:
+                    for i in range(len(events)):
+                        event_link = events[i].get_property("href")
+
+                        events[i].click()
+                        event_dict = self.get_event_info(event_link)
+                        print(event_dict)
+                        self.events.append(event_dict)
+                        self.go_back()
+
+                        events_per_day = self.get_calendar_data()
+                        print(events_per_day, day)
+                        events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
+                        i += 0
                 day += 1
-                continue
-            else:
-                for i in range(len(events)):
-                    event_link = events[i].get_property("href")
 
-                    events[i].click()
-                    event_dict = self.get_event_info(event_link)
-                    print(event_dict)
-                    self.events.append(event_dict)
-                    self.go_back()
-
-                    events_per_day = self.get_calendar_data()
-                    events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
-                    i += 0
-
-                day += 1
+            next_month = self.driver.find_element(By.XPATH, "//*[@id='calendarDetail']/table/tbody/tr[1]/td[3]/a")
+            self.driver.execute_script("arguments[0].click();", next_month)
+            month += 1
 
         self.driver.quit()
+
