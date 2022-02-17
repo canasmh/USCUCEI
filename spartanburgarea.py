@@ -11,10 +11,12 @@ class SpartanburgArea(Driver):
     def get_events(self):
         self.driver.get(self.url)
 
-        events = self.driver.find_elements(By.CLASS_NAME, "gz-events-card")
+        events = self.driver.find_elements(By.CSS_SELECTOR, "a span.gz-img-placeholder")
 
         for event in events:
-            print(event.text)
+            print(event.click())
+        self.driver.quit()
+
 
 sa = SpartanburgArea()
 sa.get_events()
