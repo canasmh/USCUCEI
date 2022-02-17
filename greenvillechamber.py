@@ -1,6 +1,31 @@
+import datetime
 from driver import Driver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+
+
+def convert_date_to_datetime(event_date):
+    month_conversion = {
+        "January": 1,
+        "February": 2,
+        "March": 3,
+        "April": 4,
+        "May": 5,
+        "June": 6,
+        "July": 7,
+        "August": 8,
+        "September": 9,
+        "October": 10,
+        "November": 11,
+        "December": 12
+    }
+
+    month, day, year = event_date.split(' ')
+    month = int(month_conversion[month])
+    day = int(day[:-1])
+    year = int(year)
+
+    return datetime.datetime(year, month, day)
 
 
 class GreenvilleChamber(Driver):
@@ -82,19 +107,24 @@ class GreenvilleChamber(Driver):
 
                         events[i].click()
                         event_dict = self.get_event_info(event_link)
-                        print(event_dict)
-                        self.events.append(event_dict)
-                        self.go_back()
 
+                        if convert_date_to_datetime(event_dict["Date"]) < datetime.datetime.today():
+                            self.go_back()
+                            events_per_day = self.get_calendar_data()
+                            events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
+                            print("Event has already passed.")
+
+                            continue
+
+                        print(event_dict)
+                        self.go_back()
+                        self.events.append(event_dict)
                         events_per_day = self.get_calendar_data()
-                        print(events_per_day, day)
                         events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
-                        i += 0
-                day += 1
+                    day += 1
 
             next_month = self.driver.find_element(By.XPATH, "//*[@id='calendarDetail']/table/tbody/tr[1]/td[3]/a")
             self.driver.execute_script("arguments[0].click();", next_month)
             month += 1
 
         self.driver.quit()
-
