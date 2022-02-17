@@ -1,6 +1,7 @@
 from driver import Driver
 from selenium.webdriver.common.by import By
 
+# TODO: Use href and driver.get instead of click method
 
 class SpartanburgArea(Driver):
 
