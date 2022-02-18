@@ -1,6 +1,8 @@
 from driver import Driver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+import sys
+import datetime
 
 
 class SpartanburgArea(Driver):
@@ -14,25 +16,28 @@ class SpartanburgArea(Driver):
     def format_date(date):
 
         month_conversion = {
-        "Jan": "January",
-        "Feb": "February",
-        "Mar": "March",
-        "Apr": "April",
-        "May": "May",
-        "Jun": "June",
-        "Jul": "July",
-        "Aug": "August",
-        "Sep": "September",
-        "Oct": "October",
-        "Nov": "November",
-        "Dec": "December"
+        "Jan": 1,
+        "Feb": 2,
+        "Mar": 3,
+        "Apr": 4,
+        "May": 5,
+        "Jun": 6,
+        "Jul": 7,
+        "Aug": 8,
+        "Sep": 9,
+        "Oct": 10,
+        "Nov": 11,
+        "Dec": 12
         }
 
-        new_date = date.split(" ")
+        month, day, year = date.split(" ")
+        month = month_conversion[month]
+        day = int(day[:-1])
+        year = int(year)
 
-        new_date[0]= month_conversion[new_date[0]]
+        new_date = datetime.date(year, month, day)
 
-        return " ".join(new_date)
+        return new_date.strftime("%B %d, %Y")
 
     @staticmethod
     def format_time(time):
@@ -60,7 +65,9 @@ class SpartanburgArea(Driver):
             try:
                 link = self.driver.find_element(By.CSS_SELECTOR, "div.gz-event-website a").get_attribute("href")
             except NoSuchElementException:
-                link = "N/A"
+                back_button = self.driver.find_element(By.CSS_SELECTOR, "div.gz-page-return a")
+                self.driver.get(back_button.get_attribute("href"))
+                continue
 
             description_list = self.driver.find_elements(By.CSS_SELECTOR, "div.col p")
 
@@ -75,7 +82,7 @@ class SpartanburgArea(Driver):
                 "Link": link,
                 "Description": description
             }
-
+            print(event_dict)
             self.events.append(event_dict)
 
             # Go back to calendar page.
