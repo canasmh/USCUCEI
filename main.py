@@ -8,6 +8,12 @@ gc = GreenvilleChamber()
 sa = SpartanburgArea()
 scra = SouthCarolinaResearchAuthority()
 
+# TODO: Scrape Start Grow Upstate
+# TODO: Create EventDataBase object
+# TODO: Order events by date
+# TODO: Add Events to database
+# TODO: Add event data to wordpress
+
 # Scrape websites for events
 print("Scraping Greenville Chambers...")
 try:
