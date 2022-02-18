@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
 
-def convert_date_to_datetime(event_date):
+def convert_date_to_date(event_date):
     month_conversion = {
         "January": 1,
         "February": 2,
@@ -25,7 +25,13 @@ def convert_date_to_datetime(event_date):
     day = int(day[:-1])
     year = int(year)
 
-    return datetime.datetime(year, month, day)
+    return datetime.date(year, month, day)
+
+
+def format_date(date):
+    date = convert_date_to_date(date)
+
+    return date.strftime("%B %d, %Y")
 
 
 class GreenvilleChamber(Driver):
@@ -108,7 +114,7 @@ class GreenvilleChamber(Driver):
                         events[i].click()
                         event_dict = self.get_event_info(event_link)
 
-                        if convert_date_to_datetime(event_dict["Date"]) < datetime.datetime.today():
+                        if convert_date_to_date(event_dict["Date"]) < datetime.date.today():
                             self.go_back()
                             events_per_day = self.get_calendar_data()
                             events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
