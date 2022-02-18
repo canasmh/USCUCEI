@@ -54,10 +54,14 @@ class SpartanburgArea(Driver):
 
             # Date and time of event
             event_dt = self.driver.find_elements(By.CSS_SELECTOR, "div.gz-event-date span")
-            # format Weekday Month 01, YYYY
             date = self.format_date(' '.join(event_dt[0].text.split(" ")[1:]))
             time = self.format_time(event_dt[1].text)
+            title = self.driver.find_element(By.CSS_SELECTOR, "h1.gz-pagetitle").text
+            description_list = self.driver.find_elements(By.CSS_SELECTOR, "div.col p")
 
+            description = ""
+            for item in description_list:
+                description += item.text
 
 
             # Go back to calendar page.
