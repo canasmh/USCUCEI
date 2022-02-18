@@ -1,5 +1,6 @@
 from driver import Driver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
 # TODO: Use href and driver.get instead of click method
 
@@ -57,12 +58,26 @@ class SpartanburgArea(Driver):
             date = self.format_date(' '.join(event_dt[0].text.split(" ")[1:]))
             time = self.format_time(event_dt[1].text)
             title = self.driver.find_element(By.CSS_SELECTOR, "h1.gz-pagetitle").text
+            try:
+                link = self.driver.find_element(By.CSS_SELECTOR, "div.gz-event-website a").get_attribute("href")
+            except NoSuchElementException:
+                link = "N/A"
+
             description_list = self.driver.find_elements(By.CSS_SELECTOR, "div.col p")
 
             description = ""
             for item in description_list:
                 description += item.text
 
+            event_dict = {
+                "Title": title,
+                "Date": date,
+                "Time": time,
+                "Link": link,
+                "Description": description
+            }
+
+            print(event_dict)
 
             # Go back to calendar page.
             back_button = self.driver.find_element(By.CSS_SELECTOR, "div.gz-page-return a")
