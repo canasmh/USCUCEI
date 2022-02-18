@@ -53,7 +53,7 @@ class SouthCarolinaResearchAuthority(Driver):
 
             event_dict = {
                 "Title": title,
-                "Date": date,
+                "Date": date.strftime("%B %d, %Y"),
                 "Time": time,
                 "Link": link,
                 "Description": description
