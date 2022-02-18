@@ -2,14 +2,13 @@ from driver import Driver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
-# TODO: Use href and driver.get instead of click method
-
 
 class SpartanburgArea(Driver):
 
     def __init__(self):
         super().__init__()
         self.url = "http://spartanburgareasc.chambermaster.com/events/"
+        self.events = []
 
     @staticmethod
     def format_date(date):
@@ -77,13 +76,9 @@ class SpartanburgArea(Driver):
                 "Description": description
             }
 
-            print(event_dict)
+            self.events.append(event_dict)
 
             # Go back to calendar page.
             back_button = self.driver.find_element(By.CSS_SELECTOR, "div.gz-page-return a")
             self.driver.get(back_button.get_attribute("href"))
         self.driver.quit()
-
-
-sa = SpartanburgArea()
-sa.get_events()
