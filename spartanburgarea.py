@@ -83,7 +83,7 @@ class SpartanburgArea(Driver):
                 "Link": link,
                 "Description": description
             }
-            print(event_dict)
+
             self.events.append(event_dict)
 
             # Go back to calendar page.

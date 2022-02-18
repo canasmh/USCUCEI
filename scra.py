@@ -27,7 +27,6 @@ class SouthCarolinaResearchAuthority(Driver):
             date = convert_to_date_time(datetime_element.get_attribute("datetime"))
 
             if date < datetime.date.today():
-                print("Event has passed")
                 continue
 
             date_and_time = datetime_element.text
@@ -58,8 +57,6 @@ class SouthCarolinaResearchAuthority(Driver):
                 "Link": link,
                 "Description": description
             }
-            print("")
-            print(event_dict)
             self.events.append(event_dict)
 
         self.driver.quit()

@@ -118,11 +118,8 @@ class GreenvilleChamber(Driver):
                             self.go_back()
                             events_per_day = self.get_calendar_data()
                             events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
-                            print("Event has already passed.")
-
                             continue
 
-                        print(event_dict)
                         self.go_back()
                         self.events.append(event_dict)
                         events_per_day = self.get_calendar_data()
