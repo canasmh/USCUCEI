@@ -1,7 +1,6 @@
 from driver import Driver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
-import sys
 import datetime
 
 
@@ -57,17 +56,19 @@ class SpartanburgArea(Driver):
             event = self.driver.find_elements(By.CSS_SELECTOR, ".card-header a")[n]
             self.driver.get(event.get_attribute("href"))
 
-            # Date and time of event
-            event_dt = self.driver.find_elements(By.CSS_SELECTOR, "div.gz-event-date span")
-            date = self.format_date(' '.join(event_dt[0].text.split(" ")[1:]))
-            time = self.format_time(event_dt[1].text)
-            title = self.driver.find_element(By.CSS_SELECTOR, "h1.gz-pagetitle").text
             try:
                 link = self.driver.find_element(By.CSS_SELECTOR, "div.gz-event-website a").get_attribute("href")
             except NoSuchElementException:
                 back_button = self.driver.find_element(By.CSS_SELECTOR, "div.gz-page-return a")
                 self.driver.get(back_button.get_attribute("href"))
                 continue
+
+            # Date and time of event
+            event_dt = self.driver.find_elements(By.CSS_SELECTOR, "div.gz-event-date span")
+            date = self.format_date(' '.join(event_dt[0].text.split(" ")[1:]))
+            time = self.format_time(event_dt[1].text)
+            title = self.driver.find_element(By.CSS_SELECTOR, "h1.gz-pagetitle").text
+
 
             description_list = self.driver.find_elements(By.CSS_SELECTOR, "div.col p")
 
