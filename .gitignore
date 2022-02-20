@@ -5,6 +5,11 @@
 # Files edited with Emacs
 *~
 
+# Images used for other USCUCEI puposes
+*.png
+*.jpeg
+*.jpg
+*.pdf
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
