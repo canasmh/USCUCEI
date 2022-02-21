@@ -2,6 +2,11 @@ from driver import Driver
 from selenium.webdriver.common.by import By
 import time
 
+# TODO: Get event end time
+# TODO: Check if event has already passed
+# TODO: Create dictionary for each event
+# TODO: append dictionary to self.events
+
 
 class StartGrowUpstate(Driver):
 
