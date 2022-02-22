@@ -1,11 +1,17 @@
+import datetime
+
 from driver import Driver
 from selenium.webdriver.common.by import By
-import time
+from selenium.common.exceptions import NoSuchElementException
+from datetime import date
 
-# TODO: Get event end time
-# TODO: Check if event has already passed
-# TODO: Create dictionary for each event
-# TODO: append dictionary to self.events
+
+def format_date(event_date):
+
+    month, day, year = event_date.split("/")
+    event_date = datetime.date(int(year), int(month), int(day))
+
+    return event_date
 
 
 class StartGrowUpstate(Driver):
@@ -23,7 +29,6 @@ class StartGrowUpstate(Driver):
         n = 0
         events = self.driver.find_elements(By.CSS_SELECTOR, ".calendarRecord")
         n_events = len(events)
-        print(n_events)
 
         events[n].click()
         while n < n_events:
@@ -36,22 +41,36 @@ class StartGrowUpstate(Driver):
             title = self.driver.find_element(
                 By.XPATH,
                 '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[1]/div[2]/div/div/div'
-            )
+            ).text
 
-            date = self.driver.find_element(
+            event_date = self.driver.find_element(
                 By.XPATH,
                 '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[2]/div[2]/div/div/div/div/div[1]/div'
-            )
+            ).text
+
+            event_date = format_date(event_date)
+
+            if event_date < date.today():
+                n += 1
+                continue
 
             description = self.driver.find_element(
                 By.XPATH,
                 '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[7]/div[2]/div/div/div/div/div[1]'
-            )
+            ).text
 
             start_time = self.driver.find_element(
                 By.XPATH,
                 '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div'
-            )
+            ).text
+
+            try:
+                end_time = self.driver.find_element(
+                    By.XPATH,
+                    '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[3]/div[2]/div/div/div/div/div[2]/div'
+                ).text
+            except NoSuchElementException:
+                end_time = "Not Specified"
 
             link_button = self.driver.find_element(
                 By.XPATH,
@@ -60,8 +79,16 @@ class StartGrowUpstate(Driver):
 
             link = link_button.get_attribute("href")
 
-            print("n: " + str(n) + "\n" + title.text + "\n" + date.text + "\n" + start_time.text + "\n" + end_time.text + "\n" + link + "\n" + description.text + "\n")
-            time.sleep(0.5)
+            event_dict = {
+                "Title": title,
+                "Date": event_date.strftime("%B %d, %Y"),
+                "Time": start_time + " - " + end_time,
+                "Link": link,
+                "Description": description
+            }
+
+            self.events.append(event_dict)
             n += 1
 
         self.driver.quit()
+
