@@ -9,12 +9,6 @@ import time
 # For calculating run time
 start_time = time.perf_counter()
 
-# Instantiate classes
-gc = GreenvilleChamber()
-sa = SpartanburgArea()
-scra = SouthCarolinaResearchAuthority()
-sgu = StartGrowUpstate()
-
 # TODO: Create EventDataBase object
 # TODO: Order events by date https://www.tutorialspoint.com/How-to-sort-a-Python-date-string-list#:~:text=To%20sort%20a%20Python%20date%20string%20list%20using%20the%20sort,based%20on%20this%20date%20object.
 # TODO: Add Events to database
@@ -22,6 +16,8 @@ sgu = StartGrowUpstate()
 
 events = []
 # Scrape websites for events
+
+gc = GreenvilleChamber()
 print(f"Scraping Greenville Chambers...\nURL: {gc.url}")
 try:
     gc.get_events()
@@ -29,6 +25,7 @@ try:
 except Exception as err:
     print(f"There was an error:\n{err}")
 
+sa = SpartanburgArea()
 print(f"\nScraping Spartanburg Area...\nURL: {sa.url}")
 try:
     sa.get_events()
@@ -36,6 +33,7 @@ try:
 except Exception as err:
     print(f"There was an error:\n{err}")
 
+scra = SouthCarolinaResearchAuthority()
 print(f"\nScraping South Carolina Research Authority...\nURL: {scra.url}")
 try:
     scra.get_events()
@@ -43,6 +41,8 @@ try:
 except Exception as err:
     print(f"There was an error:\n{err}")
 
+
+sgu = StartGrowUpstate()
 print(f"\nScraping Start Grow Upstate...\nURL: {sgu.url}")
 try:
     sgu.get_events()
