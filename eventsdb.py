@@ -19,29 +19,35 @@ class EventsDB:
         try:
             self.connection = sqlite3.connect(self.db_name)
         except Error as err:
-            print(f"There was an error:\n{err}")
+            print(f"There was an error connecting:\n{err}")
 
     def create_cursor(self):
         if self.connection is None:
             self.connect()
-        self.cursor = self.connection.cursor()
+        try:
+            self.cursor = self.connection.cursor()
+        except Error as err:
+            print(f"There was an error creating cursor:\n{err}")
 
     def create_table(self):
 
         if self.cursor is None:
             self.create_cursor()
-        self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {self.table_name}
-                            {self.table_header}''')
-        self.connection.commit()
+
+        try:
+            self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {self.table_name}
+                                {self.table_header}''')
+            self.connection.commit()
+        except Error as err:
+            print(f"There was an error creating table: {err}")
 
     def add_events(self):
-        no_new_events = True
         if self.cursor is None:
             self.create_table()
 
         self.cursor.execute(f"SELECT * FROM {self.table_name}")
         records = self.cursor.fetchall()
-
+        n_events_added = 0
         for item in self.events:
             new_event = "("
             for key in item.keys():
@@ -69,12 +75,14 @@ class EventsDB:
                     new_event += ", 'False')"
                     self.cursor.execute(f"INSERT INTO {self.table_name} VALUES {new_event}")
                     self.connection.commit()
-                    no_new_events = False
+                    n_events_added += 1
                 except Error as err:
-                    print(f"There was an error: {err}")
+                    print(f"There was an error adding event: {err}")
 
-        if no_new_events:
+        if n_events_added == 0:
             print("No new events were added...")
+        else:
+            print(f"{n_events_added} total events added.")
 
     def end_connection(self):
 
