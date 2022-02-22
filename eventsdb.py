@@ -10,6 +10,7 @@ class EventsDB:
         self.db_name = os.getcwd() + 'events.db'
         self.table_name = 'events'
         self.events = events
+        self.events.sort(key=lambda item: datetime.strptime(item['Date'], "%B %d, %Y"))
 
     def connect(self):
 
