@@ -4,7 +4,7 @@ from scra import SouthCarolinaResearchAuthority
 from startgrowupstate import StartGrowUpstate
 import time
 
-"Total Time Worked: 18hr25min"
+"Total Time Worked: 20hr30min"
 
 # For calculating run time
 start_time = time.perf_counter()
