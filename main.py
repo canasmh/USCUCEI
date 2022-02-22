@@ -6,13 +6,10 @@ import time
 
 "Total Time Worked: 20hr55min"
 
+# TODO: Add event data to wordpress
+
 # For calculating run time
 start_time = time.perf_counter()
-
-# TODO: Create EventDataBase object
-# TODO: Order events by date https://www.tutorialspoint.com/How-to-sort-a-Python-date-string-list#:~:text=To%20sort%20a%20Python%20date%20string%20list%20using%20the%20sort,based%20on%20this%20date%20object.
-# TODO: Add Events to database
-# TODO: Add event data to wordpress
 
 events = []
 # Scrape websites for events
