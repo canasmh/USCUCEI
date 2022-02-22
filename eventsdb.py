@@ -2,7 +2,6 @@ import sqlite3
 from sqlite3 import Error
 from datetime import datetime
 
-# TODO: Add 'Posted' to header. Value will be bool.
 
 class EventsDB:
 
@@ -11,7 +10,7 @@ class EventsDB:
         self.table_name = 'events'
         self.events = events
         self.events.sort(key=lambda item: datetime.strptime(item['Date'], "%B %d, %Y"))
-        self.table_header = "(Title, Date, Time, Link, Description)"
+        self.table_header = "(Title, Date, Time, Link, Description, Posted)"
         self.connection = None
         self.cursor = None
 
@@ -58,16 +57,16 @@ class EventsDB:
                 if key != list(item.keys())[-1]:
                     new_event += ", "
 
-            new_event += ")"
-
             repeated_event = False
             if records:
                 for record in records:
-                    if str(record) == new_event:
+                    if str(record) == new_event + ")":
                         repeated_event = True
 
             if not repeated_event:
                 try:
+                    # This Posted column indicated whether or not event has already been posted to WordPress
+                    new_event += ", 'False')"
                     self.cursor.execute(f"INSERT INTO {self.table_name} VALUES {new_event}")
                     self.connection.commit()
                     no_new_events = False
