@@ -2,14 +2,13 @@ from greenvillechamber import GreenvilleChamber
 from spartanburgarea import SpartanburgArea
 from scra import SouthCarolinaResearchAuthority
 
-"Total Time Worked: 17hr45min"
+"Total Time Worked: 18hr00min"
 
 # Instantiate classes
 gc = GreenvilleChamber()
 sa = SpartanburgArea()
 scra = SouthCarolinaResearchAuthority()
 
-# TODO: Scrape Start Grow Upstate
 # TODO: Create EventDataBase object
 # TODO: Order events by date https://www.tutorialspoint.com/How-to-sort-a-Python-date-string-list#:~:text=To%20sort%20a%20Python%20date%20string%20list%20using%20the%20sort,based%20on%20this%20date%20object.
 # TODO: Add Events to database
