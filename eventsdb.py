@@ -2,7 +2,6 @@ import sqlite3
 from sqlite3 import Error
 from datetime import datetime
 
-# TODO: Check for repeated events.
 # TODO: Add 'Posted' to header. Value will be bool.
 
 class EventsDB:
@@ -37,7 +36,7 @@ class EventsDB:
         self.connection.commit()
 
     def add_events(self):
-
+        no_new_events = True
         if self.cursor is None:
             self.create_table()
 
@@ -47,24 +46,36 @@ class EventsDB:
         for item in self.events:
             new_event = "("
             for key in item.keys():
-                event = str(item[key])
-                new_event += "'"
 
+                event = str(item[key])
                 event = event.replace("'", "")
                 event = event.replace("\n", "")
 
+                new_event += "'"
                 new_event += event
                 new_event += "'"
+
                 if key != list(item.keys())[-1]:
                     new_event += ", "
 
             new_event += ")"
 
-            try:
-                self.cursor.execute(f"INSERT INTO {self.table_name} VALUES {new_event}")
-                self.connection.commit()
-            except Error as err:
-                print(f"There was an error: {err}")
+            repeated_event = False
+            if records:
+                for record in records:
+                    if str(record) == new_event:
+                        repeated_event = True
+
+            if not repeated_event:
+                try:
+                    self.cursor.execute(f"INSERT INTO {self.table_name} VALUES {new_event}")
+                    self.connection.commit()
+                    no_new_events = False
+                except Error as err:
+                    print(f"There was an error: {err}")
+
+        if no_new_events:
+            print("No new events were added...")
 
     def end_connection(self):
 
