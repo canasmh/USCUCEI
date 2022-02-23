@@ -66,7 +66,7 @@ class EventsDB:
             repeated_event = False
             if records:
                 for record in records:
-                    if str(record) == new_event + ")":
+                    if str(record[:-1]) == new_event + ")":
                         repeated_event = True
 
             if not repeated_event:
@@ -80,9 +80,9 @@ class EventsDB:
                     print(f"There was an error adding event: {err}")
 
         if n_events_added == 0:
-            print("No new events were added...")
+            print("No new events were added to database...")
         else:
-            print(f"{n_events_added} total events added.")
+            print(f"{n_events_added} Total events added to database")
 
     def end_connection(self):
 
