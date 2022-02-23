@@ -90,3 +90,8 @@ class SpartanburgArea(Driver):
             back_button = self.driver.find_element(By.CSS_SELECTOR, "div.gz-page-return a")
             self.driver.get(back_button.get_attribute("href"))
         self.driver.quit()
+
+
+if __name__ == "__main__":
+    sa = SpartanburgArea()
+    sa.get_events()

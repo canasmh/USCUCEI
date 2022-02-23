@@ -92,3 +92,6 @@ class StartGrowUpstate(Driver):
 
         self.driver.quit()
 
+if __name__ == "__main__":
+    sgu = StartGrowUpstate()
+    sgu.get_events()

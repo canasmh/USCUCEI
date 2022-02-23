@@ -62,5 +62,6 @@ class SouthCarolinaResearchAuthority(Driver):
         self.driver.quit()
 
 
-scra = SouthCarolinaResearchAuthority()
-scra.get_events()
+if __name__ == "__main__":
+    scra = SouthCarolinaResearchAuthority()
+    scra.get_events()
