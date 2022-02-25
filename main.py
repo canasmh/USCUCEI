@@ -58,4 +58,4 @@ end_time = time.perf_counter()
 minutes = int((end_time - start_time) / 60)
 seconds = round((end_time - start_time) % 60, 2)
 
-print(f"Total Run Time: {minutes}m {seconds}s")
+print(f"\nTotal Run Time: {minutes}m {seconds}s")
