@@ -131,3 +131,8 @@ class GreenvilleChamber(Driver):
             month += 1
 
         self.driver.quit()
+
+
+if __name__ == "__main__":
+    gc = GreenvilleChamber()
+    gc.get_events()
