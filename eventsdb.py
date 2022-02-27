@@ -84,6 +84,8 @@ class EventsDB:
         else:
             print(f"{n_events_added} Total events added to database")
 
+        self.end_connection()
+
     def end_connection(self):
 
         if self.connection is None:
