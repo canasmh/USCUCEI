@@ -42,14 +42,40 @@ class CEIWordPress(Driver):
 
         events = self.cursor.execute(f"SELECT * FROM {self.table_name}")
         for event in events:
-            title_input = self.driver.find_element(By.XPATH, '//*[@id="title"]')
-            title_input.send_keys(event[0])
+            title = event[0]
+            date = event[1]
+            event_time = event[2]
+            link = event[3]
+            description = event[4]
+            posted = event[5]
 
+            title_input = self.driver.find_element(By.XPATH, '//*[@id="title"]')
+            title_input.send_keys(title)
+
+            for i in range(100):
+                title_input.send_keys(Keys.BACKSPACE)
+
+            # Enter description
+            self.driver.switch_to.frame(self.driver.find_element(By.XPATH, '//*[@id="content_ifr"]'))
+            text_area = self.driver.find_element(By.XPATH, '//*[@id="tinymce"]')
+            text_area.click()
+            text_area.send_keys(description)
             time.sleep(0.5)
             for i in range(500):
-                title_input.send_keys(Keys.BACKSPACE)
-            print(event)
+                text_area.send_keys(Keys.BACKSPACE)
+            self.driver.switch_to.parent_frame()
+            start_date_button = self.driver.find_element(By.XPATH, '//*[@id="mec_start_date"]')
+            start_date_button.click()
+            start_month_picker = self.driver.find_element(By.XPATH, '//*[@id="ui-datepicker-div"]/div/div/select[1]')
+            start_month_picker.click()
+            months = self.driver.find_elements(By.CSS_SELECTOR, "select.ui-datepicker-month option")
+            for month in months:
+                print(month.text, type(month.text))
             time.sleep(0.5)
+            print(event)
+
+
+
         self.driver.quit()
 
 
