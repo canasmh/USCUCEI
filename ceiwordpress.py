@@ -7,9 +7,7 @@ import os
 import time
 
 
-# TODO: SELECT END TIME -- IF ANY
 # TODO: CHANGE THE POSTED ELEMENT IN DB TO FALSE (ONCE UPLOADED)
-# TODO: ADD EVENT LINK
 
 load_dotenv()
 
@@ -51,14 +49,33 @@ class CEIWordPress(Driver):
         text_area.send_keys(description)
         self.driver.switch_to.parent_frame()
 
-    def add_date(self, date):
+    def add_start_date(self, date):
         start_date_button = self.driver.find_element(By.XPATH, '//*[@id="mec_start_date"]')
         start_date_button.click()
-        start_month_picker = self.driver.find_element(By.XPATH, '//*[@id="ui-datepicker-div"]/div/div/select[1]')
-        start_month_picker.click()
+        # start_month_picker = self.driver.find_element(By.XPATH, '//*[@id="ui-datepicker-div"]/div/div/select[1]')
+        # start_month_picker.click()
         start_month_options = self.driver.find_elements(By.CSS_SELECTOR, "select.ui-datepicker-month option")
 
         for month in start_month_options:
+            if month.text == date[0:3]:
+                month.click()
+                time.sleep(1.5)
+                break
+        day_options = self.driver.find_elements(By.CSS_SELECTOR, "td[data-handler='selectDay']")
+
+        for day in day_options:
+            event_day = date.split(' ')[1]
+            if day.text == event_day[0:len(event_day) - 1]:
+                day.click()
+                
+    def add_end_date(self, date):
+        end_date_button = self.driver.find_element(By.XPATH, '//*[@id="mec_end_date"]')
+        end_date_button.click()
+        # end_month_picker = self.driver.find_element(By.XPATH, '//*[@id="ui-datepicker-div"]/div/div/select[1]')
+        # end_month_picker.click()
+        end_month_options = self.driver.find_elements(By.CSS_SELECTOR, "select.ui-datepicker-month option")
+
+        for month in end_month_options:
             if month.text == date[0:3]:
                 month.click()
                 time.sleep(1.5)
@@ -100,6 +117,47 @@ class CEIWordPress(Driver):
                 ampm.click()
                 break
 
+    def add_end_time(self, event_time):
+        end_time_hr_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_hour option")
+
+        if event_time.split(' - ')[1] == 'Not Specified':
+            print("No Event Time specified")
+        else:
+            for end_time in end_time_hr_options:
+                start, end = event_time.split(' - ')
+
+                if end_time.text == start.split(':')[0]:
+                    end_time.click()
+                    break
+
+            start_time_min_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_minutes option")
+
+            for end_time in start_time_min_options:
+                start, end = event_time.split(' - ')
+                min = start.split(':')[1]
+
+                if end_time.text == min[0:2]:
+                    end_time.click()
+                    break
+
+            start_time_ampm_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_ampm option")
+
+            for ampm in start_time_ampm_options:
+                start, end = event_time.split(' - ')
+                min = start.split(':')[1]
+
+                if ampm.text == min[len(min) - 2: len(min)]:
+                    ampm.click()
+                    break
+
+    def add_event_link(self, link):
+        links = self.driver.find_element(By.XPATH, '//*[@id="mec_metabox_details"]/div[2]/div/div[1]/a[5]')
+        links.click()
+        link_input = self.driver.find_element(By.XPATH, '//*[@id="mec_read_more_link"]')
+        link_input.send_keys(link)
+
+
+
     def post_events(self):
         self.driver.get(self.url)
         self.login()
@@ -112,13 +170,16 @@ class CEIWordPress(Driver):
             event_time = event[2]
             link = event[3]
             description = event[4]
-            posted = bool(event[5])
+            posted = event[5]
 
-            if not posted:
+            if posted == 'False':
                 self.add_title(title)
                 self.add_description(description)
-                self.add_date(date)
+                self.add_start_date(date)
                 self.add_start_time(event_time)
+                self.add_end_date(date)
+                self.add_end_time(event_time)
+                self.add_event_link(link)
 
             else:
                 continue
