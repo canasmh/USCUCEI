@@ -42,7 +42,7 @@ class CEIWordPress(Driver):
 
         events = self.cursor.execute(f"SELECT * FROM {self.table_name}")
         for event in events:
-            title = event[0]
+            title = event[0].upper()
             date = event[1]
             event_time = event[2]
             link = event[3]
@@ -50,9 +50,9 @@ class CEIWordPress(Driver):
             posted = event[5]
 
             title_input = self.driver.find_element(By.XPATH, '//*[@id="title"]')
-            title_input.send_keys(title)
+            title_input.send_keys(title.capitalize())
 
-            for i in range(100):
+            for i in range(len(title)):
                 title_input.send_keys(Keys.BACKSPACE)
 
             # Enter description
@@ -61,21 +61,25 @@ class CEIWordPress(Driver):
             text_area.click()
             text_area.send_keys(description)
             time.sleep(0.5)
-            for i in range(500):
+            for i in range(len(description)):
                 text_area.send_keys(Keys.BACKSPACE)
             self.driver.switch_to.parent_frame()
             start_date_button = self.driver.find_element(By.XPATH, '//*[@id="mec_start_date"]')
             start_date_button.click()
             start_month_picker = self.driver.find_element(By.XPATH, '//*[@id="ui-datepicker-div"]/div/div/select[1]')
             start_month_picker.click()
-            months = self.driver.find_elements(By.CSS_SELECTOR, "select.ui-datepicker-month option")
-            for month in months:
-                print(month.text, type(month.text))
+            start_month_options = self.driver.find_elements(By.CSS_SELECTOR, "select.ui-datepicker-month option")
+
+            for month in start_month_options:
+                if month.text == date[0:3]:
+                    month.click()
+                    time.sleep(1.5)
+                    break
+
+            start_time_button = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_hour option")
+
             time.sleep(0.5)
             print(event)
-
-
-
         self.driver.quit()
 
 
