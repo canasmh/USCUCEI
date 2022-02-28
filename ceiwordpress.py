@@ -75,8 +75,42 @@ class CEIWordPress(Driver):
                     month.click()
                     time.sleep(1.5)
                     break
+            day_options = self.driver.find_elements(By.CSS_SELECTOR, "td[data-handler='selectDay']")
 
-            start_time_button = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_hour option")
+            for day in day_options:
+                event_day = date.split(' ')[1]
+                if day.text == event_day[0:len(event_day) - 1]:
+                    day.click()
+
+            start_time_hr_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_hour option")
+
+            for start_time in start_time_hr_options:
+                start, end = event_time.split(' - ')
+
+                if start_time.text == start.split(':')[0]:
+                    start_time.click()
+                    break
+
+            start_time_min_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_minutes option")
+
+            for start_time in start_time_min_options:
+                start, end = event_time.split(' - ')
+                min = start.split(':')[1]
+
+                if start_time.text == min[0:2]:
+                    start_time.click()
+                    break
+
+            start_time_ampm_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_ampm option")
+
+            for ampm in start_time_ampm_options:
+                start, end = event_time.split(' - ')
+                min = start.split(':')[1]
+
+                if ampm.text == min[len(min) - 2: len(min)]:
+                    ampm.click()
+                    break
+
 
             time.sleep(0.5)
             print(event)
