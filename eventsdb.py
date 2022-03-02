@@ -9,7 +9,8 @@ class EventsDB:
         self.db_name = 'events.db'
         self.table_name = 'events'
         self.events = events
-        self.events.sort(key=lambda item: datetime.strptime(item['Date'], "%B %d, %Y"))
+        self.events.sort(key=lambda item: datetime.strptime(
+            item['Date'], "%B %d, %Y"))
         self.table_header = "(Title, Date, Time, Link, Description, Posted)"
         self.connection = None
         self.cursor = None
@@ -53,8 +54,8 @@ class EventsDB:
             for key in item.keys():
 
                 event = str(item[key])
-                event = event.replace("'", "")
-                event = event.replace("\n", "")
+                event = event.replace("'", "&&&")
+                event = event.replace("\n", "\&n")
 
                 new_event += "'"
                 new_event += event
