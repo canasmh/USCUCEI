@@ -84,13 +84,16 @@ class StartGrowUpstate(Driver):
                 "Date": event_date.strftime("%B %d, %Y"),
                 "Time": start_time + " - " + end_time,
                 "Link": link,
-                "Description": description
+                "Description": description,
+                "Posted": False,
+                "Passed": False
             }
 
             self.events.append(event_dict)
             n += 1
 
         self.driver.quit()
+
 
 if __name__ == "__main__":
     sgu = StartGrowUpstate()

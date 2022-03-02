@@ -42,7 +42,8 @@ class GreenvilleChamber(Driver):
         self.events = []
 
     def go_to_next_month(self):
-        next_button = self.driver.find_element(By.CSS_SELECTOR, "a span.fa-chevron-circle-right")
+        next_button = self.driver.find_element(
+            By.CSS_SELECTOR, "a span.fa-chevron-circle-right")
         next_button.click()
 
     def get_calendar_data(self):
@@ -56,22 +57,26 @@ class GreenvilleChamber(Driver):
     def get_event_info(self, event_link):
 
         try:
-            event_title = self.driver.find_element(By.CSS_SELECTOR, "h1.pagetitle").text
+            event_title = self.driver.find_element(
+                By.CSS_SELECTOR, "h1.pagetitle").text
         except NoSuchElementException:
             event_title = "N/A"
 
         try:
-            event_date = self.driver.find_element(By.CSS_SELECTOR, "div.date").text.split(": ")[-1]
+            event_date = self.driver.find_element(
+                By.CSS_SELECTOR, "div.date").text.split(": ")[-1]
         except NoSuchElementException:
             event_date = "N/A"
 
         try:
-            event_time = self.driver.find_element(By.CSS_SELECTOR, "div.time").text.split(": ")[-1]
+            event_time = self.driver.find_element(
+                By.CSS_SELECTOR, "div.time").text.split(": ")[-1]
         except NoSuchElementException:
             event_time = "N/A"
 
         try:
-            event_description = self.driver.find_element(By.CSS_SELECTOR, "div.description").text
+            event_description = self.driver.find_element(
+                By.CSS_SELECTOR, "div.description").text
         except NoSuchElementException:
             event_description = "N/A"
 
@@ -82,7 +87,9 @@ class GreenvilleChamber(Driver):
             "Date": event_date,
             "Time": event_time,
             "Link": event_link,
-            "Description": event_description
+            "Description": event_description,
+            "Posted": False,
+            "Passed": False,
         }
 
         return event_dict
@@ -102,7 +109,8 @@ class GreenvilleChamber(Driver):
                 events_per_day = self.get_calendar_data()
 
                 # These are the events on the 'nth' day.
-                events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
+                events = events_per_day[day].find_elements(
+                    By.CSS_SELECTOR, "a")
 
                 if len(events) == 0:
                     day += 1
@@ -117,16 +125,19 @@ class GreenvilleChamber(Driver):
                         if convert_date_to_date(event_dict["Date"]) < datetime.date.today():
                             self.go_back()
                             events_per_day = self.get_calendar_data()
-                            events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
+                            events = events_per_day[day].find_elements(
+                                By.CSS_SELECTOR, "a")
                             continue
 
                         self.go_back()
                         self.events.append(event_dict)
                         events_per_day = self.get_calendar_data()
-                        events = events_per_day[day].find_elements(By.CSS_SELECTOR, "a")
+                        events = events_per_day[day].find_elements(
+                            By.CSS_SELECTOR, "a")
                     day += 1
 
-            next_month = self.driver.find_element(By.XPATH, "//*[@id='calendarDetail']/table/tbody/tr[1]/td[3]/a")
+            next_month = self.driver.find_element(
+                By.XPATH, "//*[@id='calendarDetail']/table/tbody/tr[1]/td[3]/a")
             self.driver.execute_script("arguments[0].click();", next_month)
             month += 1
 
