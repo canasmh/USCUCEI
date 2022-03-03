@@ -60,9 +60,7 @@ class SouthCarolinaResearchAuthority(Driver):
                 "Date": date.strftime("%B %d, %Y"),
                 "Time": time,
                 "Link": link,
-                "Description": description,
-                "Posted": False,
-                "Passed": False
+                "Description": description
             }
             self.events.append(event_dict)
 

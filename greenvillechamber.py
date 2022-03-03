@@ -87,9 +87,7 @@ class GreenvilleChamber(Driver):
             "Date": event_date,
             "Time": event_time,
             "Link": event_link,
-            "Description": event_description,
-            "Posted": False,
-            "Passed": False,
+            "Description": event_description
         }
 
         return event_dict

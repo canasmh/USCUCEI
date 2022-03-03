@@ -87,9 +87,7 @@ class SpartanburgArea(Driver):
                 "Date": date,
                 "Time": time,
                 "Link": link,
-                "Description": description,
-                "Posted": False,
-                "Passed": False
+                "Description": description
             }
 
             self.events.append(event_dict)
