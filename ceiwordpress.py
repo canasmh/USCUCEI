@@ -7,7 +7,10 @@ import os
 import time
 
 
-# TODO: CHANGE THE POSTED ELEMENT IN DB TO FALSE (ONCE UPLOADED)
+# TODO: CHANGE THE POSTED ELEMENT IN DB TO FALSE (ONCE UPLOADED).
+# TODO: Upload event link as a hypertext in the description.
+# TODO: Post events and refresh the 'add-event' page.
+# Add
 
 load_dotenv()
 
@@ -150,12 +153,6 @@ class CEIWordPress(Driver):
                     ampm.click()
                     break
 
-    def add_event_link(self, link):
-        links = self.driver.find_element(By.XPATH, '//*[@id="mec_metabox_details"]/div[2]/div/div[1]/a[5]')
-        links.click()
-        link_input = self.driver.find_element(By.XPATH, '//*[@id="mec_read_more_link"]')
-        link_input.send_keys(link)
-
 
 
     def post_events(self):
@@ -179,7 +176,6 @@ class CEIWordPress(Driver):
                 self.add_start_time(event_time)
                 self.add_end_date(date)
                 self.add_end_time(event_time)
-                self.add_event_link(link)
 
             else:
                 continue
