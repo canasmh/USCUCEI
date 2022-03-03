@@ -5,7 +5,7 @@ from startgrowupstate import StartGrowUpstate
 from eventsdb import EventsDB
 import time
 
-"Total Time Worked: 23hr35min"
+"Total Time Worked: 24hr25min"
 
 # TODO: Add event data to wordpress
 
