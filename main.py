@@ -5,7 +5,7 @@ from startgrowupstate import StartGrowUpstate
 from eventsdb import EventsDB
 import time
 
-"Total Time Worked: 24hr40min"
+"Total Time Worked: 25hr30min"
 
 # TODO: Add event data to wordpress
 
@@ -22,6 +22,7 @@ try:
     events += gc.events
 except Exception as err:
     print(f"There was an error scraping {gc.name}:\n{err}")
+    gc.driver.quit()
 
 sa = SpartanburgArea()
 print(f"\nScraping Spartanburg Area...\nURL: {sa.url}")
@@ -30,6 +31,7 @@ try:
     events += sa.events
 except Exception as err:
     print(f"There was an error scraping {sa.name}:\n{err}")
+    sa.driver.quit()
 
 scra = SouthCarolinaResearchAuthority()
 print(f"\nScraping South Carolina Research Authority...\nURL: {scra.url}")
@@ -38,6 +40,7 @@ try:
     events += scra.events
 except Exception as err:
     print(f"There was an error scraping {scra.name}:\n{err}")
+    scra.driver.quit()
 
 
 sgu = StartGrowUpstate()
@@ -47,6 +50,7 @@ try:
     events += sgu.events
 except Exception as err:
     print(f"There was an error scraping {sgu.name}:\n{err}")
+    sgu.driver.quit()
 
 print(f"{len(events)} Events scraped")
 
