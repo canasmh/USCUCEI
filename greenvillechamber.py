@@ -5,6 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 
 def convert_date_to_date(event_date):
+    event_date = event_date.replace(",", "")
     month_conversion = {
         "January": 1,
         "February": 2,
@@ -19,10 +20,24 @@ def convert_date_to_date(event_date):
         "November": 11,
         "December": 12
     }
+    try:
+        month, day, year = event_date.split(' ')
+    except Exception as err:
+        print(f"Error converting date:\n{err}")
+        print(f"Original Date: {event_date}")
+        if "-" in event_date:
+            start_of_date, other_day = event_date.split("-")
+            end_of_date = other_day.split(' ')[-1]
+            event_date = start_of_date + end_of_date
+            print(f"Formatted Date: {event_date}")
 
-    month, day, year = event_date.split(' ')
+    try:
+        month, day, year = event_date.split(' ')
+    except Exception as err:
+        print(f"Error was unresolved: {err}")
+
     month = int(month_conversion[month])
-    day = int(day[:-1])
+    day = int(day)
     year = int(year)
 
     return datetime.date(year, month, day)
@@ -60,26 +75,30 @@ class GreenvilleChamber(Driver):
         try:
             event_title = self.driver.find_element(
                 By.CSS_SELECTOR, "h1.pagetitle").text
-        except NoSuchElementException:
+        except NoSuchElementException or Exception as err:
             event_title = "N/A"
+            print(f"There was an error scraping event title:\n{err}")
 
         try:
             event_date = self.driver.find_element(
                 By.CSS_SELECTOR, "div.date").text.split(": ")[-1]
-        except NoSuchElementException:
+        except NoSuchElementException or Exception as err:
             event_date = "N/A"
+            print(f"There was an error scraping event date:\n{err}")
 
         try:
             event_time = self.driver.find_element(
                 By.CSS_SELECTOR, "div.time").text.split(": ")[-1]
-        except NoSuchElementException:
+        except NoSuchElementException or Exception as err:
             event_time = "N/A"
+            print(f"There was an error scraping event time:\n{err}")
 
         try:
             event_description = self.driver.find_element(
                 By.CSS_SELECTOR, "div.description").text
-        except NoSuchElementException:
+        except NoSuchElementException or Exception as err:
             event_description = "N/A"
+            print(f"There was an error scraping event description:\n{err}")
 
         # event_location = self.driver.find_element_by_css_selector("div.address").text
 
@@ -90,6 +109,8 @@ class GreenvilleChamber(Driver):
             "Link": event_link,
             "Description": event_description
         }
+
+        print(event_dict)
 
         return event_dict
 
@@ -141,3 +162,7 @@ class GreenvilleChamber(Driver):
             month += 1
 
         self.driver.quit()
+
+if __name__ == "__main__":
+    gc = GreenvilleChamber()
+    gc.get_events()
