@@ -9,9 +9,8 @@ class EventsDB:
         self.db_name = 'events.db'
         self.table_name = 'events'
         self.events = events
-        self.events.sort(key=lambda item: datetime.strptime(
-            item['Date'], "%B %d, %Y"))
-        self.table_header = "(Title, Date, Time, Link, Description, Posted)"
+        self.events.sort(key=lambda item: datetime.strptime(item['Date'], "%B %d, %Y"))
+        self.table_header = "(Title, Date, Time, Link, Description, Posted, id)"
         self.connection = None
         self.cursor = None
 
@@ -46,8 +45,6 @@ class EventsDB:
         if self.cursor is None:
             self.create_table()
 
-        self.cursor.execute(f"SELECT * FROM {self.table_name}")
-        records = self.cursor.fetchall()
         n_events_added = 0
         for item in self.events:
             new_event = "("
@@ -65,18 +62,26 @@ class EventsDB:
                     new_event += ", "
 
             repeated_event = False
+            self.cursor.execute(f"SELECT Title, Date, Time, Link, Description FROM {self.table_name}")
+            records = self.cursor.fetchall()
             if records:
+                data_id = len(records)
                 for record in records:
-                    if str(record[:-1]) == new_event + ")":
+                    print(str(record))
+                    print(new_event + ")")
+                    if str(record) == new_event + ")":
                         repeated_event = True
+            else:
+                data_id = 0
 
             if not repeated_event:
                 try:
                     # This Posted column indicated whether or not event has already been posted to WordPress
-                    new_event += ", 'False')"
+                    new_event += f", 'False', '{data_id}')"
                     self.cursor.execute(f"INSERT INTO {self.table_name} VALUES {new_event}")
                     self.connection.commit()
                     n_events_added += 1
+
                 except Error as err:
                     print(f"There was an error adding event: {err}")
 
