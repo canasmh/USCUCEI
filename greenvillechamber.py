@@ -39,6 +39,7 @@ class GreenvilleChamber(Driver):
     def __init__(self):
         super().__init__()
         self.url = "https://www.greenvillechamber.org/index.php?src=events&srctype=glance&submenu=_newsevents"
+        self.name = "Greenville Chambers"
         self.events = []
 
     def go_to_next_month(self):

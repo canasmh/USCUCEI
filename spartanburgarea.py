@@ -9,6 +9,7 @@ class SpartanburgArea(Driver):
     def __init__(self):
         super().__init__()
         self.url = "http://spartanburgareasc.chambermaster.com/events/"
+        self.name = "Spartanburg Area"
         self.events = []
 
     @staticmethod

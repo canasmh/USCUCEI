@@ -19,6 +19,7 @@ class StartGrowUpstate(Driver):
     def __init__(self):
         super().__init__()
         self.url = "https://www.startgrowupstate.com/explore-events"
+        self.name = "Start Grow Upstate"
         self.events = []
 
     def get_events(self):

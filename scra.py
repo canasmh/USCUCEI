@@ -14,6 +14,7 @@ class SouthCarolinaResearchAuthority(Driver):
     def __init__(self):
         super().__init__()
         self.url = "https://www.scra.org/calendar/list/"
+        self.name = "SCRA"
         self.events = []
 
     def get_events(self):
