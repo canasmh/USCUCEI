@@ -77,28 +77,24 @@ class GreenvilleChamber(Driver):
                 By.CSS_SELECTOR, "h1.pagetitle").text
         except NoSuchElementException or Exception as err:
             event_title = "N/A"
-            print(f"There was an error scraping event title:\n{err}")
 
         try:
             event_date = self.driver.find_element(By.CSS_SELECTOR, "div.date").text.split(": ")[-1]
             event_date = format_date(event_date)
         except NoSuchElementException or Exception as err:
             event_date = "N/A"
-            print(f"There was an error scraping event date:\n{err}")
 
         try:
             event_time = self.driver.find_element(
                 By.CSS_SELECTOR, "div.time").text.split(": ")[-1]
         except NoSuchElementException or Exception as err:
             event_time = "N/A"
-            print(f"There was an error scraping event time:\n{err}")
 
         try:
             event_description = self.driver.find_element(
                 By.CSS_SELECTOR, "div.description").text
         except NoSuchElementException or Exception as err:
             event_description = "N/A"
-            print(f"There was an error scraping event description:\n{err}")
 
         # event_location = self.driver.find_element_by_css_selector("div.address").text
 
