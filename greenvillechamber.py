@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
 
-def convert_date_to_date(event_date):
+def convert_date(event_date):
     event_date = event_date.replace(",", "")
     month_conversion = {
         "January": 1,
@@ -44,7 +44,7 @@ def convert_date_to_date(event_date):
 
 
 def format_date(date):
-    date = convert_date_to_date(date)
+    date = convert_date(date)
 
     return date.strftime("%B %d, %Y")
 
@@ -80,8 +80,8 @@ class GreenvilleChamber(Driver):
             print(f"There was an error scraping event title:\n{err}")
 
         try:
-            event_date = self.driver.find_element(
-                By.CSS_SELECTOR, "div.date").text.split(": ")[-1]
+            event_date = self.driver.find_element(By.CSS_SELECTOR, "div.date").text.split(": ")[-1]
+            event_date = format_date(event_date)
         except NoSuchElementException or Exception as err:
             event_date = "N/A"
             print(f"There was an error scraping event date:\n{err}")
@@ -142,7 +142,7 @@ class GreenvilleChamber(Driver):
                         events[i].click()
                         event_dict = self.get_event_info(event_link)
 
-                        if convert_date_to_date(event_dict["Date"]) < datetime.date.today():
+                        if datetime.datetime.strptime(event_dict['Date'], "%B %d, %Y") < datetime.datetime.today():
                             self.go_back()
                             events_per_day = self.get_calendar_data()
                             events = events_per_day[day].find_elements(
