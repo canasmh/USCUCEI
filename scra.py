@@ -63,6 +63,8 @@ class SouthCarolinaResearchAuthority(Driver):
                 "Link": link,
                 "Description": description
             }
+
+            print(event_dict)
             self.events.append(event_dict)
 
         self.driver.quit()
