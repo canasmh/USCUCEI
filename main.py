@@ -5,7 +5,7 @@ from startgrowupstate import StartGrowUpstate
 from eventsdb import EventsDB
 import time
 
-"Total Time Worked: 25hr30min"
+"Total Time Worked: 26hr20min"
 
 # TODO: Add event data to wordpress
 
@@ -54,8 +54,12 @@ except Exception as err:
 
 print(f"{len(events)} Events scraped")
 
-edb = EventsDB(events)
-edb.add_events()
+print("Adding events to the database")
+try:
+    edb = EventsDB(events)
+    edb.add_events()
+except Exception as err:
+    print(f"There was an error uploading events to database:\n{err}")
 
 
 end_time = time.perf_counter()
