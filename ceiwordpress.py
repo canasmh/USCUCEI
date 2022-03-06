@@ -55,8 +55,8 @@ class CEIWordPress(Driver):
     def add_start_date(self, date):
         start_date_button = self.driver.find_element(By.XPATH, '//*[@id="mec_start_date"]')
         start_date_button.click()
-        # start_month_picker = self.driver.find_element(By.XPATH, '//*[@id="ui-datepicker-div"]/div/div/select[1]')
-        # start_month_picker.click()
+        start_month_picker = self.driver.find_element(By.XPATH, '//*[@id="ui-datepicker-div"]/div/div/select[1]')
+        start_month_picker.click()
         start_month_options = self.driver.find_elements(By.CSS_SELECTOR, "select.ui-datepicker-month option")
 
         for month in start_month_options:
@@ -74,8 +74,8 @@ class CEIWordPress(Driver):
     def add_end_date(self, date):
         end_date_button = self.driver.find_element(By.XPATH, '//*[@id="mec_end_date"]')
         end_date_button.click()
-        # end_month_picker = self.driver.find_element(By.XPATH, '//*[@id="ui-datepicker-div"]/div/div/select[1]')
-        # end_month_picker.click()
+        end_month_picker = self.driver.find_element(By.XPATH, '//*[@id="ui-datepicker-div"]/div/div/select[1]')
+        end_month_picker.click()
         end_month_options = self.driver.find_elements(By.CSS_SELECTOR, "select.ui-datepicker-month option")
 
         for month in end_month_options:
@@ -153,8 +153,6 @@ class CEIWordPress(Driver):
                     ampm.click()
                     break
 
-
-
     def post_events(self):
         self.driver.get(self.url)
         self.login()
@@ -162,20 +160,24 @@ class CEIWordPress(Driver):
 
         events = self.cursor.execute(f"SELECT * FROM {self.table_name}")
         for event in events:
-            title = event[0].upper()
+            title = event[0]
             date = event[1]
             event_time = event[2]
             link = event[3]
             description = event[4]
             posted = event[5]
+            id = event[6]
 
             if posted == 'False':
-                self.add_title(title)
+                self.add_title(title.upper())
                 self.add_description(description)
                 self.add_start_date(date)
                 self.add_start_time(event_time)
                 self.add_end_date(date)
                 self.add_end_time(event_time)
+                self.cursor.execute(f"UPDATE {self.table_name} SET Posted=True WHERE id={id}")
+                self.connection.commit()
+                print("Record Updated Successfully.")
 
             else:
                 continue
