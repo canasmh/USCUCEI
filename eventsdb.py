@@ -10,7 +10,8 @@ class EventsDB:
         self.table_name = 'events'
         self.events = events
         self.events.sort(key=lambda item: datetime.strptime(item['Date'], "%B %d, %Y"))
-        self.table_header = "(Title, Date, Time, Link, Description, Posted, id)"
+        self.table_header = "(Title VARCHAR(100), Date VARCHAR(100), Time VARCHAR(100), Link VARCHAR(100), " \
+                            "Description VARCHAR(2000), Posted BOOL, id INT NOT NULL, PRIMARY KEY (id)) "
         self.connection = None
         self.cursor = None
 
@@ -67,8 +68,6 @@ class EventsDB:
             if records:
                 data_id = len(records)
                 for record in records:
-                    print(str(record))
-                    print(new_event + ")")
                     if str(record) == new_event + ")":
                         repeated_event = True
             else:
@@ -77,7 +76,7 @@ class EventsDB:
             if not repeated_event:
                 try:
                     # This Posted column indicated whether or not event has already been posted to WordPress
-                    new_event += f", 'False', '{data_id}')"
+                    new_event += f", '0', '{data_id}')"
                     self.cursor.execute(f"INSERT INTO {self.table_name} VALUES {new_event}")
                     self.connection.commit()
                     n_events_added += 1
