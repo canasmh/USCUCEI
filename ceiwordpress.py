@@ -6,11 +6,8 @@ import sqlite3
 import os
 import time
 
-
-# TODO: CHANGE THE POSTED ELEMENT IN DB TO FALSE (ONCE UPLOADED).
 # TODO: Upload event link as a hypertext in the description.
-# TODO: Post events and refresh the 'add-event' page.
-# Add
+# TODO: Format description in event to match the format of the events already posted by CEI members
 
 load_dotenv()
 
@@ -43,7 +40,7 @@ class CEIWordPress(Driver):
 
     def add_title(self, title):
         title_input = self.driver.find_element(By.XPATH, '//*[@id="title"]')
-        title_input.send_keys(title.capitalize())
+        title_input.send_keys(title)
 
     def add_description(self, description):
         self.driver.switch_to.frame(self.driver.find_element(By.XPATH, '//*[@id="content_ifr"]'))
@@ -158,6 +155,7 @@ class CEIWordPress(Driver):
         self.login()
         self.add_event_page()
 
+        ids_to_be_posted = []
         events = self.cursor.execute(f"SELECT * FROM {self.table_name}")
         for event in events:
             title = event[0]
@@ -168,22 +166,32 @@ class CEIWordPress(Driver):
             posted = event[5]
             id = event[6]
 
-            if posted == 'False':
-                self.add_title(title.upper())
+            if not posted:
+                self.add_title("TEST" + title.upper())
                 self.add_description(description)
                 self.add_start_date(date)
                 self.add_start_time(event_time)
                 self.add_end_date(date)
                 self.add_end_time(event_time)
-                self.cursor.execute(f"UPDATE {self.table_name} SET Posted=True WHERE id={id}")
-                self.connection.commit()
-                print("Record Updated Successfully.")
+                publish_button = self.driver.find_element(By.XPATH, '//*[@id="publish"]')
+                self.driver.execute_script("arguments[0].click();", publish_button)
+                self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
+                ids_to_be_posted.append(id)
+                time.sleep(2)
 
             else:
                 continue
 
             time.sleep(0.5)
-            print(event)
+        if len(ids_to_be_posted) != 0:
+            for id in ids_to_be_posted:
+                self.cursor.execute(f"UPDATE {self.table_name} SET Posted = '1' WHERE id = {id}")
+                self.connection.commit()
+                print(f"Record with id: {id} Updated Successfully.")
+        else:
+            print("No new events were posted...")
+
+        self.connection.close()
         self.driver.quit()
 
 
