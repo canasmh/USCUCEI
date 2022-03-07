@@ -47,7 +47,12 @@ class CEIWordPress(Driver):
         self.driver.switch_to.frame(self.driver.find_element(By.XPATH, '//*[@id="content_ifr"]'))
         text_area = self.driver.find_element(By.XPATH, '//*[@id="tinymce"]')
         text_area.click()
-        text_area.send_keys(description)
+        if type(description) is list:
+            for item in description:
+                text_area.send_keys(item)
+                text_area.send_keys(Keys.RETURN)
+        else:
+            text_area.send_keys(description)
         self.driver.switch_to.parent_frame()
 
     def add_start_date(self, date):
@@ -166,6 +171,11 @@ class CEIWordPress(Driver):
             description = event[4]
             posted = event[5]
             id = event[6]
+
+            # Replace special characters made in eventdb.py
+            description = description.replace("&&&", "'")
+            if "&&n" in description:
+                description = description.split("&&n")
 
             if not posted:
                 self.add_title("TEST" + title.upper())
