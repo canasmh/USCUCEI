@@ -52,7 +52,7 @@ class EventsDB:
 
                 event = str(item[key])
                 event = event.replace("'", "&&&")
-                event = event.replace("\n", "\&n")
+                event = event.replace("\n", "&&n")
 
                 new_event += "'"
                 new_event += event
