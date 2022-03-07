@@ -8,6 +8,7 @@ import time
 
 # TODO: Upload event link as a hypertext in the description.
 # TODO: Format description in event to match the format of the events already posted by CEI members
+# TODO: Replace special characters &&& and &&n
 
 load_dotenv()
 
