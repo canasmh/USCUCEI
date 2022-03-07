@@ -77,11 +77,18 @@ class SpartanburgArea(Driver):
                 By.CSS_SELECTOR, "h1.gz-pagetitle").text
 
             description_list = self.driver.find_elements(
-                By.CSS_SELECTOR, "div.col p")
+                By.CSS_SELECTOR, "div.col")
 
             description = ""
             for item in description_list:
                 description += item.text
+
+                if len(description) == 0:
+                    continue
+                else:
+                    description += "\n"
+
+            description = description.replace(title + "\n", "")
 
             event_dict = {
                 "Title": title,
