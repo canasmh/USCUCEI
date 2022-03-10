@@ -3,11 +3,12 @@ from spartanburgarea import SpartanburgArea
 from scra import SouthCarolinaResearchAuthority
 from startgrowupstate import StartGrowUpstate
 from eventsdb import EventsDB
+from ceiwordpress import CEIWordPress
 import time
 
-"Total Time Worked: 28hr55min"
+"Total Time Worked: 30hr35min"
 
-# TODO: Add event data to wordpress
+# TODO: Debug SCRA and CEIWordPress
 
 # For calculating run time
 start_time = time.perf_counter()
@@ -65,5 +66,11 @@ except Exception as err:
 end_time = time.perf_counter()
 minutes = int((end_time - start_time) / 60)
 seconds = round((end_time - start_time) % 60, 2)
+
+try:
+    wp = CEIWordPress()
+    wp.post_events()
+except Exception as err:
+    print(f"There was an error posting events to wordpress:\n{err}")
 
 print(f"\nTotal Run Time: {minutes}m {seconds}s")
