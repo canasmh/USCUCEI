@@ -14,24 +14,29 @@ class SouthCarolinaResearchAuthority(Driver):
     def __init__(self):
         super().__init__()
         self.url = "https://www.scra.org/calendar/list/"
+        self.name = "SCRA"
         self.events = []
 
     def get_events(self):
 
         self.driver.get(self.url)
-        events = self.driver.find_elements(By.CSS_SELECTOR, "div.tribe-events-calendar-list__event-details")
+        events = self.driver.find_elements(
+            By.CSS_SELECTOR, "div.tribe-events-calendar-list__event-details")
 
         for i in range(len(events)):
-            events = self.driver.find_elements(By.CSS_SELECTOR, "div.tribe-events-calendar-list__event-details")
+            events = self.driver.find_elements(
+                By.CSS_SELECTOR, "div.tribe-events-calendar-list__event-details")
             datetime_element = events[i].find_element(By.CSS_SELECTOR, "time")
-            date = convert_to_date_time(datetime_element.get_attribute("datetime"))
+            date = convert_to_date_time(
+                datetime_element.get_attribute("datetime"))
 
             if date < datetime.date.today():
                 continue
 
             date_and_time = datetime_element.text
             time = date_and_time.split('@ ')[-1]
-            link_element = events[i].find_element(By.CSS_SELECTOR, "a.tribe-events-calendar-list__event-title-link")
+            link_element = events[i].find_element(
+                By.CSS_SELECTOR, "a.tribe-events-calendar-list__event-title-link")
             title = link_element.text
             link = link_element.get_attribute("href")
             link_element.click()
@@ -39,7 +44,8 @@ class SouthCarolinaResearchAuthority(Driver):
             new_window = self.driver.window_handles[-1]
             self.driver.switch_to.window(new_window)
 
-            event_details = self.driver.find_element(By.CSS_SELECTOR, "div.tribe-events-single-event-description")
+            event_details = self.driver.find_element(
+                By.CSS_SELECTOR, "div.tribe-events-single-event-description")
             p_elements = event_details.find_elements(By.CSS_SELECTOR, "p")
             description = "N/A"
 
@@ -57,6 +63,8 @@ class SouthCarolinaResearchAuthority(Driver):
                 "Link": link,
                 "Description": description
             }
+
+            print(event_dict)
             self.events.append(event_dict)
 
         self.driver.quit()
