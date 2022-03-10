@@ -19,6 +19,7 @@ class StartGrowUpstate(Driver):
     def __init__(self):
         super().__init__()
         self.url = "https://www.startgrowupstate.com/explore-events"
+        self.name = "Start Grow Upstate"
         self.events = []
 
     def get_events(self):
@@ -87,8 +88,13 @@ class StartGrowUpstate(Driver):
                 "Description": description
             }
 
+            print(event_dict)
             self.events.append(event_dict)
             n += 1
 
         self.driver.quit()
 
+
+if __name__ == "__main__":
+    sgu = StartGrowUpstate()
+    sgu.get_events()

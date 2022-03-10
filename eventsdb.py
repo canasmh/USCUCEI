@@ -10,7 +10,8 @@ class EventsDB:
         self.table_name = 'events'
         self.events = events
         self.events.sort(key=lambda item: datetime.strptime(item['Date'], "%B %d, %Y"))
-        self.table_header = "(Title, Date, Time, Link, Description, Posted)"
+        self.table_header = "(Title VARCHAR(100), Date VARCHAR(100), Time VARCHAR(100), Link VARCHAR(100), " \
+                            "Description VARCHAR(2000), Posted BOOL, id INT NOT NULL, PRIMARY KEY (id)) "
         self.connection = None
         self.cursor = None
 
@@ -45,16 +46,14 @@ class EventsDB:
         if self.cursor is None:
             self.create_table()
 
-        self.cursor.execute(f"SELECT * FROM {self.table_name}")
-        records = self.cursor.fetchall()
         n_events_added = 0
         for item in self.events:
             new_event = "("
             for key in item.keys():
 
                 event = str(item[key])
-                event = event.replace("'", "")
-                event = event.replace("\n", "")
+                event = event.replace("'", "&&&")
+                event = event.replace("\n", "&&n")
 
                 new_event += "'"
                 new_event += event
@@ -64,25 +63,34 @@ class EventsDB:
                     new_event += ", "
 
             repeated_event = False
+            self.cursor.execute(f"SELECT Title, Date, Time, Link, Description FROM {self.table_name}")
+            records = self.cursor.fetchall()
             if records:
+                data_id = len(records)
                 for record in records:
                     if str(record) == new_event + ")":
                         repeated_event = True
+                        print("There is a repeated event")
+            else:
+                data_id = 0
 
             if not repeated_event:
                 try:
                     # This Posted column indicated whether or not event has already been posted to WordPress
-                    new_event += ", 'False')"
+                    new_event += f", '0', '{data_id}')"
                     self.cursor.execute(f"INSERT INTO {self.table_name} VALUES {new_event}")
                     self.connection.commit()
                     n_events_added += 1
+
                 except Error as err:
                     print(f"There was an error adding event: {err}")
 
         if n_events_added == 0:
-            print("No new events were added...")
+            print("No new events were added to database...")
         else:
-            print(f"{n_events_added} total events added.")
+            print(f"{n_events_added} Total events added to database")
+
+        self.end_connection()
 
     def end_connection(self):
 
