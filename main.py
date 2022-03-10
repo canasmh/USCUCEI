@@ -6,7 +6,7 @@ from eventsdb import EventsDB
 from ceiwordpress import CEIWordPress
 import time
 
-"Total Time Worked: 31hr40min"
+"Total Time Worked: 32hr10min"
 
 # TODO: Debug SCRA and CEIWordPress
 
