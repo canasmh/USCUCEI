@@ -93,41 +93,50 @@ class CEIWordPress(Driver):
                 day.click()
 
     def add_start_time(self, event_time):
-        # Options for the hour -- from 1 - 12
-        start_time_hr_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_hour option")
 
-        for start_time in start_time_hr_options:
-            start, end = event_time.split(' - ')
+        if event_time == "N/A":
+            self.driver.find_element(By.XPATH, '// *[ @ id = "mec_hide_time"]').click()
+        else:
+            # Options for the hour -- from 1 - 12
+            start_time_hr_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_hour option")
 
-            # if the hour matches the time in the database, click on that one.
-            if start_time.text == start.split(':')[0]:
-                start_time.click()
-                break
+            for start_time in start_time_hr_options:
+                start, end = event_time.split(' - ')
 
-        start_time_min_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_minutes option")
+                # if the hour matches the time in the database, click on that one.
+                if start_time.text == start.split(':')[0]:
+                    start_time.click()
+                    break
 
-        for start_time in start_time_min_options:
-            start, end = event_time.split(' - ')
-            min = start.split(':')[1]
+            start_time_min_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_minutes option")
 
-            if start_time.text == min[0:2]:
-                start_time.click()
-                break
+            for start_time in start_time_min_options:
+                start, end = event_time.split(' - ')
+                min = start.split(':')[1]
 
-        start_time_ampm_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_ampm option")
+                if start_time.text == min[0:2]:
+                    start_time.click()
+                    break
 
-        for ampm in start_time_ampm_options:
-            start, end = event_time.split(' - ')
-            min = start.split(':')[1]
+            start_time_ampm_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_ampm option")
 
-            if str(ampm.text).lower() == min[len(min) - 2: len(min)].lower():
-                ampm.click()
-                break
+            for ampm in start_time_ampm_options:
+                start, end = event_time.split(' - ')
+                min = start.split(':')[1]
+
+                if str(ampm.text).lower() == min[len(min) - 2: len(min)].lower():
+                    ampm.click()
+                    break
 
     def add_end_time(self, event_time):
         end_time_hr_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_hour option")
 
-        if event_time.split(' - ')[1] == 'Not Specified':
+        if event_time == "N/A":
+            pass
+
+        elif event_time.split(' - ')[1] == 'Not Specified':
+            # Hide Event Time
+            self.driver.find_element(By. XPATH, '//*[@id="mec_hide_end_time"]').click()
             print("No Event Time specified")
         else:
             for end_time in end_time_hr_options:
