@@ -43,9 +43,10 @@ class CEIWordPress(Driver):
         title_input = self.driver.find_element(By.XPATH, '//*[@id="title"]')
         title_input.send_keys(title)
 
-    def add_description(self, description):
-        self.driver.switch_to.frame(self.driver.find_element(By.XPATH, '//*[@id="content_ifr"]'))
-        text_area = self.driver.find_element(By.XPATH, '//*[@id="tinymce"]')
+    def add_description(self, description, link):
+        switch_to_text = self.driver.find_element(By.XPATH, '//*[@id="content-html"]')
+        switch_to_text.click()
+        text_area = self.driver.find_element(By.XPATH, '//*[@id="content"]')
         text_area.click()
         if type(description) is list:
             for item in description:
@@ -53,7 +54,9 @@ class CEIWordPress(Driver):
                 text_area.send_keys(Keys.RETURN)
         else:
             text_area.send_keys(description)
-        self.driver.switch_to.parent_frame()
+
+        if link != "N/A":
+            text_area.send_keys(f"\n<a href={link}>Click HERE to register</a>")
 
     def add_start_date(self, date):
         start_date_button = self.driver.find_element(By.XPATH, '//*[@id="mec_start_date"]')
@@ -179,7 +182,7 @@ class CEIWordPress(Driver):
 
             if not posted:
                 self.add_title("TEST" + title.upper())
-                self.add_description(description)
+                self.add_description(description, link)
                 self.add_start_date(date)
                 self.add_start_time(event_time)
                 self.add_end_date(date)
