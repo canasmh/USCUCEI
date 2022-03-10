@@ -49,6 +49,7 @@ class CEIWordPress(Driver):
             for item in description:
                 text_area.send_keys(item)
                 text_area.send_keys(Keys.RETURN)
+                text_area.send_keys(Keys.RETURN)
         else:
             text_area.send_keys(description)
 
@@ -119,7 +120,6 @@ class CEIWordPress(Driver):
         for ampm in start_time_ampm_options:
             start, end = event_time.split(' - ')
             min = start.split(':')[1]
-            print(min[len(min) - 2: len(min)].lower(), str(ampm.text).lower())
 
             if str(ampm.text).lower() == min[len(min) - 2: len(min)].lower():
                 ampm.click()
@@ -180,16 +180,23 @@ class CEIWordPress(Driver):
                 description = description.split("&&n")
 
             if not posted:
-                self.add_title("TEST " + title.upper())
-                self.add_description(description, link)
-                self.add_start_date(date)
-                self.add_start_time(event_time)
-                self.add_end_date(date)
-                self.add_end_time(event_time)
-                publish_button = self.driver.find_element(By.XPATH, '//*[@id="publish"]')
-                self.driver.execute_script("arguments[0].click();", publish_button)
-                self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
-                ids_to_be_posted.append(id)
+                try:
+                    self.add_title("TEST " + title.upper())
+                    self.add_description(description, link)
+                    self.add_start_date(date)
+                    self.add_start_time(event_time)
+                    self.add_end_date(date)
+                    self.add_end_time(event_time)
+                    publish_button = self.driver.find_element(By.XPATH, '//*[@id="publish"]')
+                    self.driver.execute_script("arguments[0].click();", publish_button)
+                    time.sleep(3)
+                    self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
+                except Exception as err:
+                    print(f"Event not posted:\nid: {id}\ntitle: {title.upper()}\n {err}")
+                    self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
+
+                else:
+                    ids_to_be_posted.append(id)
 
             else:
                 continue
