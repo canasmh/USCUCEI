@@ -67,6 +67,7 @@ end_time = time.perf_counter()
 minutes = int((end_time - start_time) / 60)
 seconds = round((end_time - start_time) % 60, 2)
 
+print("Posting events to WordPress")
 try:
     wp = CEIWordPress()
     wp.post_events()
