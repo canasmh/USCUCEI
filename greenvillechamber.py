@@ -35,6 +35,8 @@ def convert_date(event_date):
         month, day, year = event_date.split(' ')
     except Exception as err:
         print(f"Error was unresolved: {err}")
+    else:
+        print("Error was resolved")
 
     month = int(month_conversion[month])
     day = int(day)
