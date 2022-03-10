@@ -6,8 +6,7 @@ import sqlite3
 import os
 import time
 
-# TODO: Debug time -- end time and start time are the same for all events. Sometimes the time is in AM when it should be in PM
-# TODO: Debug -- there was an error uploading events to wordpress
+# TODO: Debug -- there was an error uploading events to wordpress (maybe because sometimes are N/A)
 
 load_dotenv()
 
