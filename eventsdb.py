@@ -70,6 +70,7 @@ class EventsDB:
                 for record in records:
                     if str(record) == new_event + ")":
                         repeated_event = True
+                        print("There is a repeated event")
             else:
                 data_id = 0
 
