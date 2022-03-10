@@ -197,13 +197,14 @@ class CEIWordPress(Driver):
                     self.add_end_time(event_time)
                     publish_button = self.driver.find_element(By.XPATH, '//*[@id="publish"]')
                     self.driver.execute_script("arguments[0].click();", publish_button)
-                    time.sleep(3)
-                    self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
                 except Exception as err:
                     print(f"Event not posted:\nid: {id}\ntitle: {title.upper()}\n {err}")
                     self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
-
+                    time.sleep(2)
+                    self.driver.switch_to.alert.accept()
                 else:
+                    time.sleep(3)
+                    self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
                     ids_to_be_posted.append(id)
 
             else:
