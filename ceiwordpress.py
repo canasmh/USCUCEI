@@ -30,13 +30,11 @@ class CEIWordPress(Driver):
         self.driver.find_element(By.ID, "wp-submit").click()
 
     def add_event_page(self):
-        time.sleep(2)
         ME_Calendar = self.driver.find_element(By.XPATH, '//*[@id="toplevel_page_mec-intro"]/a/div[3]')
         ME_Calendar.click()
-        time.sleep(2)
+
         add_event_menu_button = self.driver.find_element(By.XPATH, '//*[@id="toplevel_page_mec-intro"]/ul/li[4]/a')
         add_event_menu_button.click()
-        time.sleep(2)
 
     def add_title(self, title):
         title_input = self.driver.find_element(By.XPATH, '//*[@id="title"]')
@@ -67,7 +65,6 @@ class CEIWordPress(Driver):
         for month in start_month_options:
             if month.text == date[0:3]:
                 month.click()
-                time.sleep(1.5)
                 break
         day_options = self.driver.find_elements(By.CSS_SELECTOR, "td[data-handler='selectDay']")
 
@@ -86,7 +83,7 @@ class CEIWordPress(Driver):
         for month in end_month_options:
             if month.text == date[0:3]:
                 month.click()
-                time.sleep(1.5)
+
                 break
         day_options = self.driver.find_elements(By.CSS_SELECTOR, "td[data-handler='selectDay']")
 
@@ -96,11 +93,13 @@ class CEIWordPress(Driver):
                 day.click()
 
     def add_start_time(self, event_time):
+        # Options for the hour -- from 1 - 12
         start_time_hr_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_hour option")
 
         for start_time in start_time_hr_options:
             start, end = event_time.split(' - ')
 
+            # if the hour matches the time in the database, click on that one.
             if start_time.text == start.split(':')[0]:
                 start_time.click()
                 break
@@ -120,8 +119,9 @@ class CEIWordPress(Driver):
         for ampm in start_time_ampm_options:
             start, end = event_time.split(' - ')
             min = start.split(':')[1]
+            print(min[len(min) - 2: len(min)].lower(), str(ampm.text).lower())
 
-            if ampm.text == min[len(min) - 2: len(min)]:
+            if str(ampm.text).lower() == min[len(min) - 2: len(min)].lower():
                 ampm.click()
                 break
 
@@ -134,7 +134,7 @@ class CEIWordPress(Driver):
             for end_time in end_time_hr_options:
                 start, end = event_time.split(' - ')
 
-                if end_time.text == start.split(':')[0]:
+                if end_time.text == end.split(':')[0]:
                     end_time.click()
                     break
 
@@ -142,7 +142,7 @@ class CEIWordPress(Driver):
 
             for end_time in start_time_min_options:
                 start, end = event_time.split(' - ')
-                min = start.split(':')[1]
+                min = end.split(':')[1]
 
                 if end_time.text == min[0:2]:
                     end_time.click()
@@ -152,9 +152,9 @@ class CEIWordPress(Driver):
 
             for ampm in start_time_ampm_options:
                 start, end = event_time.split(' - ')
-                min = start.split(':')[1]
+                min = end.split(':')[1]
 
-                if ampm.text == min[len(min) - 2: len(min)]:
+                if str(ampm.text).lower() == min[len(min) - 2: len(min)].lower():
                     ampm.click()
                     break
 
@@ -190,12 +190,10 @@ class CEIWordPress(Driver):
                 self.driver.execute_script("arguments[0].click();", publish_button)
                 self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
                 ids_to_be_posted.append(id)
-                time.sleep(2)
 
             else:
                 continue
 
-            time.sleep(0.5)
         if len(ids_to_be_posted) != 0:
             for id in ids_to_be_posted:
                 self.cursor.execute(f"UPDATE {self.table_name} SET Posted = '1' WHERE id = {id}")
