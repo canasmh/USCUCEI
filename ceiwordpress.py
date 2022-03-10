@@ -6,9 +6,8 @@ import sqlite3
 import os
 import time
 
-# TODO: Upload event link as a hypertext in the description.
-# TODO: Format description in event to match the format of the events already posted by CEI members
-# TODO: Replace special characters &&& and &&n
+# TODO: Debug time -- end time and start time are the same for all events. Sometimes the time is in AM when it should be in PM
+# TODO: Debug -- there was an error uploading events to wordpress
 
 load_dotenv()
 
@@ -181,7 +180,7 @@ class CEIWordPress(Driver):
                 description = description.split("&&n")
 
             if not posted:
-                self.add_title("TEST" + title.upper())
+                self.add_title("TEST " + title.upper())
                 self.add_description(description, link)
                 self.add_start_date(date)
                 self.add_start_time(event_time)
