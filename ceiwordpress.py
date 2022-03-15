@@ -183,6 +183,7 @@ class CEIWordPress(Driver):
             id = event[6]
 
             # Replace special characters made in eventdb.py
+            title = title.replace("&&&", "'")
             description = description.replace("&&&", "'")
             if "&&n" in description:
                 description = description.split("&&n")
@@ -199,8 +200,9 @@ class CEIWordPress(Driver):
                     self.driver.execute_script("arguments[0].click();", publish_button)
                 except Exception as err:
                     print(f"Event not posted:\nid: {id}\ntitle: {title.upper()}\n {err}")
+                    time.sleep(3)
                     self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
-                    time.sleep(2)
+
                     self.driver.switch_to.alert.accept()
                 else:
                     time.sleep(3)
