@@ -6,9 +6,9 @@ from eventsdb import EventsDB
 from ceiwordpress import CEIWordPress
 import time
 
-"Total Time Worked: 32hr40min"
+"Total Time Worked: 32hr50min"
 
-# TODO: Debug SCRA and CEIWordPress
+# TODO: Debug SGU and CEIWordPress
 
 # For calculating run time
 start_time = time.perf_counter()
