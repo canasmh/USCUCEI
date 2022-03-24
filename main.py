@@ -1,16 +1,29 @@
-from greenvillechamber import GreenvilleChamber
-from spartanburgarea import SpartanburgArea
-from scra import SouthCarolinaResearchAuthority
-from startgrowupstate import StartGrowUpstate
-from eventsdb import EventsDB
-from ceiwordpress import CEIWordPress
 import time
+import smtplib, ssl
+from ceiwordpress import CEIWordPress
+from eventsdb import EventsDB
+from greenvillechamber import GreenvilleChamber
+from scra import SouthCarolinaResearchAuthority
+from spartanburgarea import SpartanburgArea
+from startgrowupstate import StartGrowUpstate
+from dotenv import load_dotenv
+import os
 
-"Total Time Worked: 35hr30min"
+load_dotenv()
 
-# TODO: Send E-Mail in case of Error
+"Total Time Worked: 36hr25min"
+
 # TODO: Upload to Python anywhere
 
+
+# For E-Mail
+
+port = 465  # For SSL
+smtp_server = "smtp.gmail.com"
+sender_email = os.environ.get("SENDER_EMAIL")
+receiver_email = os.environ.get("RECEIVER_EMAIL")
+password = os.environ.get("SENDER_PASSWORD")
+context = ssl.create_default_context()
 
 # For calculating run time
 start_time = time.perf_counter()
@@ -25,6 +38,11 @@ try:
     events += gc.events
 except Exception as err:
     print(f"There was an error scraping {gc.name}:\n{err}")
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        message = f"Subject: ERROR SCRAPING {gc.name.upper()}\n\nError Message:\n{err}"
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
+
     gc.driver.quit()
 
 sa = SpartanburgArea()
@@ -34,6 +52,10 @@ try:
     events += sa.events
 except Exception as err:
     print(f"There was an error scraping {sa.name}:\n{err}")
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        message = f"Subject: ERROR SCRAPING {sa.name.upper()}\n\nError Message:\n{err}"
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
     sa.driver.quit()
 
 scra = SouthCarolinaResearchAuthority()
@@ -42,6 +64,10 @@ try:
     scra.get_events()
     events += scra.events
 except Exception as err:
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        message = f"Subject: ERROR SCRAPING {scra.name.upper()}\n\nError Message:\n{err}"
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
     print(f"There was an error scraping {scra.name}:\n{err}")
     scra.driver.quit()
 
@@ -53,6 +79,10 @@ try:
     events += sgu.events
 except Exception as err:
     print(f"There was an error scraping {sgu.name}:\n{err}")
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        message = f"Subject: ERROR SCRAPING {sgu.name.upper()}\n\nError Message:\n{err}"
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
     sgu.driver.quit()
 
 print(f"{len(events)} Events scraped")
@@ -63,6 +93,10 @@ try:
     edb.add_events()
 except Exception as err:
     print(f"There was an error uploading events to database:\n{err}")
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        message = f"Subject: ERROR SCRAPING ADDING EVENT TO DATABASE\n\nError Message:\n{err}"
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
 
 
 end_time = time.perf_counter()
@@ -75,5 +109,9 @@ try:
     wp.post_events()
 except Exception as err:
     print(f"There was an error posting events to wordpress:\n{err}")
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        message = f"Subject: ERROR POSTING EVENT TO WORDPRESS\n\nError Message:\n{err}"
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
 
 print(f"\nTotal Run Time: {minutes}m {seconds}s")
