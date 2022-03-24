@@ -1,4 +1,5 @@
 from driver import Driver
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from dotenv import load_dotenv
@@ -29,11 +30,7 @@ class CEIWordPress(Driver):
         self.driver.find_element(By.ID, "wp-submit").click()
 
     def add_event_page(self):
-        ME_Calendar = self.driver.find_element(By.XPATH, '//*[@id="toplevel_page_mec-intro"]/a/div[3]')
-        ME_Calendar.click()
-
-        add_event_menu_button = self.driver.find_element(By.XPATH, '//*[@id="toplevel_page_mec-intro"]/ul/li[4]/a')
-        add_event_menu_button.click()
+        self.driver.get(os.environ.get("WP_ADD_POST"))
 
     def add_title(self, title):
         title_input = self.driver.find_element(By.XPATH, '//*[@id="title"]')
@@ -199,14 +196,18 @@ class CEIWordPress(Driver):
                     publish_button = self.driver.find_element(By.XPATH, '//*[@id="publish"]')
                     self.driver.execute_script("arguments[0].click();", publish_button)
                 except Exception as err:
-                    print(f"Event not posted:\nid: {id}\ntitle: {title.upper()}\n {err}")
-                    time.sleep(3)
-                    self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
+                    print(f"Event not posted: {title.upper()}\n {err}")
+                    # restart the driver
+                    self.driver.quit()
+                    self.driver = webdriver.Chrome(service=self.service)
+                    self.driver.get(os.environ.get("WP_URL"))
+                    self.login()
+                    self.add_event_page()
 
-                    self.driver.switch_to.alert.accept()
                 else:
+                    print(f"Event Publichsed:{title}")
                     time.sleep(3)
-                    self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
+                    self.add_event_page()
                     ids_to_be_posted.append(id)
 
             else:
