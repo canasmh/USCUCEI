@@ -11,9 +11,9 @@ import os
 
 load_dotenv()
 
-"Total Time Worked: 36hr25min"
+"Total Time Worked: 36hr30min"
 
-# TODO: Upload to Python anywhere
+# TODO: Automate script: https://towardsdatascience.com/how-to-easily-automate-your-python-scripts-on-mac-and-windows-459388c9cc94
 
 
 # For E-Mail
