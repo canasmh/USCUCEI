@@ -6,7 +6,7 @@ from datetime import datetime
 class EventsDB:
 
     def __init__(self, events):
-        self.db_name = 'events.db'
+        self.db_name = '/Users/manny/Documents/Freelancing/USCUCEI/events.db'
         self.table_name = 'events'
         self.events = events
         self.table_header = "(Title VARCHAR(100), Date VARCHAR(100), Time VARCHAR(100), Link VARCHAR(100), " \
