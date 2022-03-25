@@ -1,12 +1,11 @@
 from driver import Driver
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from dotenv import load_dotenv
 import sqlite3
 import os
 import time
-
-# TODO: Debug -- there was an error uploading events to wordpress (maybe because sometimes are N/A)
 
 load_dotenv()
 
@@ -16,10 +15,11 @@ class CEIWordPress(Driver):
     def __init__(self):
         super().__init__()
         self.url = os.environ.get("WP_URL")
-        self.db_name = 'events.db'
+        self.db_name = '/Users/manny/Documents/Freelancing/USCUCEI/events.db'
         self.table_name = 'events'
         self.connection = sqlite3.connect(self.db_name)
         self.cursor = self.connection.cursor()
+        self.events_not_posted = []
 
     def login(self):
         username_field = self.driver.find_element(By.ID, "user_login")
@@ -29,11 +29,7 @@ class CEIWordPress(Driver):
         self.driver.find_element(By.ID, "wp-submit").click()
 
     def add_event_page(self):
-        ME_Calendar = self.driver.find_element(By.XPATH, '//*[@id="toplevel_page_mec-intro"]/a/div[3]')
-        ME_Calendar.click()
-
-        add_event_menu_button = self.driver.find_element(By.XPATH, '//*[@id="toplevel_page_mec-intro"]/ul/li[4]/a')
-        add_event_menu_button.click()
+        self.driver.get(os.environ.get("WP_ADD_POST"))
 
     def add_title(self, title):
         title_input = self.driver.find_element(By.XPATH, '//*[@id="title"]')
@@ -132,12 +128,12 @@ class CEIWordPress(Driver):
         end_time_hr_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_hour option")
 
         if event_time == "N/A":
-            pass
+            hide_time_button = self.driver.find_element(By.XPATH, '//*[@id="mec_hide_time"]')
+            hide_time_button.click()
 
         elif event_time.split(' - ')[1] == 'Not Specified':
             # Hide Event Time
             self.driver.find_element(By. XPATH, '//*[@id="mec_hide_end_time"]').click()
-            print("No Event Time specified")
         else:
             for end_time in end_time_hr_options:
                 start, end = event_time.split(' - ')
@@ -183,13 +179,14 @@ class CEIWordPress(Driver):
             id = event[6]
 
             # Replace special characters made in eventdb.py
+            title = title.replace("&&&", "'")
             description = description.replace("&&&", "'")
             if "&&n" in description:
                 description = description.split("&&n")
 
             if not posted:
                 try:
-                    self.add_title("TEST " + title.upper())
+                    self.add_title(title.upper())
                     self.add_description(description, link)
                     self.add_start_date(date)
                     self.add_start_time(event_time)
@@ -197,13 +194,20 @@ class CEIWordPress(Driver):
                     self.add_end_time(event_time)
                     publish_button = self.driver.find_element(By.XPATH, '//*[@id="publish"]')
                     self.driver.execute_script("arguments[0].click();", publish_button)
-                    time.sleep(3)
-                    self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
                 except Exception as err:
-                    print(f"Event not posted:\nid: {id}\ntitle: {title.upper()}\n {err}")
-                    self.driver.get("https://uscupstatecei.org/wp-admin/post-new.php?post_type=mec-events")
+                    print(f"Event not posted: {title.upper()}\n {err}")
+                    self.events_not_posted.append(title)
+                    # restart the driver
+                    self.driver.quit()
+                    self.driver = webdriver.Chrome(service=self.service)
+                    self.driver.get(os.environ.get("WP_URL"))
+                    self.login()
+                    self.add_event_page()
 
                 else:
+                    print(f"Event Published: {title}")
+                    time.sleep(3)
+                    self.add_event_page()
                     ids_to_be_posted.append(id)
 
             else:

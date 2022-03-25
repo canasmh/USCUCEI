@@ -5,6 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 
 def convert_date(event_date):
+    error = False
     event_date = event_date.replace(",", "")
     month_conversion = {
         "January": 1,
@@ -30,13 +31,15 @@ def convert_date(event_date):
             end_of_date = other_day.split(' ')[-1]
             event_date = start_of_date + end_of_date
             print(f"Formatted Date: {event_date}")
+            error = True
 
-    try:
-        month, day, year = event_date.split(' ')
-    except Exception as err:
-        print(f"Error was unresolved: {err}")
-    else:
-        print("Error was resolved")
+    if error:
+        try:
+            month, day, year = event_date.split(' ')
+        except Exception as err:
+            print(f"Error was unresolved: {err}")
+        else:
+            print("Error was resolved")
 
     month = int(month_conversion[month])
     day = int(day)

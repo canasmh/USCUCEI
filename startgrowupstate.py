@@ -1,9 +1,11 @@
 import datetime
+import time
 
 from driver import Driver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from datetime import date
+import sys
 
 
 def format_date(event_date):
@@ -24,7 +26,6 @@ class StartGrowUpstate(Driver):
 
     def get_events(self):
         self.driver.get(self.url)
-        self.driver.maximize_window()
         calendar_object = self.driver.find_element(By.TAG_NAME, "iframe")
         self.driver.switch_to.frame(calendar_object)
         n = 0
@@ -33,49 +34,48 @@ class StartGrowUpstate(Driver):
 
         events[n].click()
         while n < n_events:
-            next_event_button = self.driver.find_element(
-                By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[1]/div/div/div/div[1]/div[3]'
-             )
-            next_event_button.click()
-
             title = self.driver.find_element(
                 By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[1]/div[2]/div/div/div'
+                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[1]/div[2]/div/div/div'
             ).text
 
             event_date = self.driver.find_element(
                 By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[2]/div[2]/div/div/div/div/div[1]/div'
+                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[2]/div[2]/div/div/div/div/div[1]/div'
             ).text
 
             event_date = format_date(event_date)
 
             if event_date < date.today():
                 n += 1
+                next_event_button = self.driver.find_element(
+                    By.XPATH,
+                    '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[1]/div/div/div/div[1]/div[3]'
+                )
+                next_event_button.click()
                 continue
 
             description = self.driver.find_element(
                 By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[7]/div[2]/div/div/div/div/div[1]'
+                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[7]/div[2]/div/div/div/div/div[1]'
             ).text
 
             start_time = self.driver.find_element(
                 By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div'
+                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div'
             ).text
 
             try:
                 end_time = self.driver.find_element(
                     By.XPATH,
-                    '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[3]/div[2]/div/div/div/div/div[2]/div'
+                    '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div[2]/div/div/div/div/div[2]/div'
                 ).text
             except NoSuchElementException:
                 end_time = "Not Specified"
 
             link_button = self.driver.find_element(
                 By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div[1]/div[5]/div[2]/div/div/div/a'
+                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[5]/div[2]/div/div/div/a'
             )
 
             link = link_button.get_attribute("href")
@@ -90,6 +90,11 @@ class StartGrowUpstate(Driver):
 
             print(event_dict)
             self.events.append(event_dict)
+            next_event_button = self.driver.find_element(
+                By.XPATH,
+                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[1]/div/div/div/div[1]/div[3]'
+            )
+            next_event_button.click()
             n += 1
 
         self.driver.quit()
