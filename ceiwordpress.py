@@ -129,12 +129,12 @@ class CEIWordPress(Driver):
         end_time_hr_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_hour option")
 
         if event_time == "N/A":
-            pass
+            hide_time_button = self.driver.find_element(By.XPATH, '//*[@id="mec_hide_time"]')
+            hide_time_button.click()
 
         elif event_time.split(' - ')[1] == 'Not Specified':
             # Hide Event Time
             self.driver.find_element(By. XPATH, '//*[@id="mec_hide_end_time"]').click()
-            print("No Event Time specified")
         else:
             for end_time in end_time_hr_options:
                 start, end = event_time.split(' - ')
@@ -205,7 +205,7 @@ class CEIWordPress(Driver):
                     self.add_event_page()
 
                 else:
-                    print(f"Event Publichsed:{title}")
+                    print(f"Event Published: {title}")
                     time.sleep(3)
                     self.add_event_page()
                     ids_to_be_posted.append(id)
