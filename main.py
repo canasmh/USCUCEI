@@ -13,7 +13,9 @@ import os
 
 load_dotenv()
 
-"Total Time Worked: 40hr00min"
+"Total Time Worked: 40hr25min"
+
+
 
 # For E-Mail
 sender_email = os.environ.get("SENDER_EMAIL")
@@ -22,10 +24,13 @@ password = os.environ.get("SENDER_PASSWORD")
 
 # For calculating run time
 start_time = time.perf_counter()
+
+# Time Stamp of when code was ran
 runtime = datetime.datetime.now()
 
 events = []
 errors = []
+
 # Scrape websites for events
 gc = GreenvilleChamber()
 print(f"Scraping Greenville Chambers...\nURL: {gc.url}")
@@ -35,6 +40,7 @@ try:
 except Exception as err:
     errors.append(err)
     print(f"There was an error scraping {gc.name}:\n{err}")
+    # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         msg = f"Subject: ERROR SCRAPING {gc.name.upper()}\n\nError Message:\n{err}"
         connection.starttls()
@@ -54,6 +60,7 @@ try:
 except Exception as err:
     errors.append(err)
     print(f"There was an error scraping {sa.name}:\n{err}")
+    # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         msg = f"Subject: ERROR SCRAPING {sa.name.upper()}\n\nError Message:\n{err}"
         connection.starttls()
@@ -73,6 +80,7 @@ try:
 except Exception as err:
     errors.append(err)
     print(f"There was an error scraping {scra.name}:\n{err}")
+    # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         msg = f"Subject: ERROR SCRAPING {scra.name.upper()}\n\nError Message:\n{err}"
         connection.starttls()
@@ -92,6 +100,7 @@ try:
 except Exception as err:
     errors.append(err)
     print(f"There was an error scraping {sgu.name}:\n{err}")
+    # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         msg = f"Subject: ERROR SCRAPING {sgu.name.upper()}\n\nError Message:\n{err}"
         connection.starttls()
@@ -112,6 +121,7 @@ try:
 except Exception as err:
     errors.append(err)
     print(f"There was an error uploading events to database:\n{err}")
+    # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         msg = f"Subject: ERROR ADDING EVENT TO DATABASE\n\nError Message:\n{err}"
         connection.starttls()
@@ -123,6 +133,7 @@ except Exception as err:
         )
 
 
+# Calculaute run time
 end_time = time.perf_counter()
 minutes = int((end_time - start_time) / 60)
 seconds = round((end_time - start_time) % 60, 2)
@@ -134,6 +145,7 @@ try:
 except Exception as err:
     errors.append(err)
     print(f"There was an error posting events to wordpress:\n{err}")
+    # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         msg = f"Subject: ERROR POSTING EVENT TO WORDPRESS\n\nError Message:\n{err}"
         connection.starttls()
@@ -146,8 +158,15 @@ except Exception as err:
 
 print(f"\nTotal Run Time: {minutes}m {seconds}s")
 
+# Send final email with status reports
 with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
-    msg = f"Subject: WEBSCRAPER STATUS\n\nWebScraper ran on {runtime.date()} {runtime.hour}:{runtime.minute}\n"
+    msg = f"Subject: WEBSCRAPER STATUS REPORT\n\n"
+
+    # Include the date and time the code ran
+    msg += f"WebScraper ran on {runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n"
+    # TODO: Include Number events scraped and number of events posted in final
+
+    # Include errors that were presented (if any)
     if len(errors) != 0:
         msg += "\n\nThe following errors were found:"
         for error in errors:
@@ -155,6 +174,7 @@ with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
     else:
         msg += "No Errors were found"
 
+    # Include the events that may possibly not have been posted (if any)
     if len(wp.events_not_posted) != 0:
         msg += "\n\nThe following events may not have been posted:\n"
         for event in wp.events_not_posted:
