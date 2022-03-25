@@ -7,8 +7,6 @@ import sqlite3
 import os
 import time
 
-# TODO: Debug -- there was an error uploading events to wordpress (maybe because sometimes are N/A)
-
 load_dotenv()
 
 
@@ -17,10 +15,11 @@ class CEIWordPress(Driver):
     def __init__(self):
         super().__init__()
         self.url = os.environ.get("WP_URL")
-        self.db_name = 'events.db'
+        self.db_name = '/Users/manny/Documents/Freelancing/USCUCEI/events.db'
         self.table_name = 'events'
         self.connection = sqlite3.connect(self.db_name)
         self.cursor = self.connection.cursor()
+        self.events_not_posted = []
 
     def login(self):
         username_field = self.driver.find_element(By.ID, "user_login")
@@ -197,6 +196,7 @@ class CEIWordPress(Driver):
                     self.driver.execute_script("arguments[0].click();", publish_button)
                 except Exception as err:
                     print(f"Event not posted: {title.upper()}\n {err}")
+                    self.events_not_posted.append(title)
                     # restart the driver
                     self.driver.quit()
                     self.driver = webdriver.Chrome(service=self.service)
