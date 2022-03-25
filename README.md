@@ -1,4 +1,4 @@
-This repository is dedicated to the web scraper used by [USC Upstate's Center for Entrepreneurship and Innovation](https://uscupstatecei.org/).
+This repository is dedicated to the web scraper used by [USC Upstate's Center for Entrepreneurship and Innovation](https://uscupstatecei.org/) (CEI).
 
 It works by scraping four different websites, namely:
 
@@ -7,7 +7,7 @@ It works by scraping four different websites, namely:
 [Spartanburg Area](http://spartanburgareasc.chambermaster.com/events/), and
 [StartGrowUpstate](https://www.startgrowupstate.com/explore-events).
 
-These events are then published the CEI's [Event Page](https://uscupstatecei.org/events).
+These events are then published to the CEI's [Event Page](https://uscupstatecei.org/events).
 
 To scrape the websites, I use Selenium. The program runs at 07:00 AM Eastern Time on Monday's, Wednesday's and Friday's and is schedule to run on my local machine using [CRON](https://crontab.guru/).
 
