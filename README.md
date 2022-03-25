@@ -7,7 +7,7 @@ It works by scraping four different websites, namely:
 [Spartanburg Area](http://spartanburgareasc.chambermaster.com/events/), and
 [StartGrowUpstate](https://www.startgrowupstate.com/explore-events).
 
-These events are then published to the CEI's [Event Page](https://uscupstatecei.org/events).
+The scraper looks for event title, date, time, link, and description and then publishes these events to the CEI's [Event Page](https://uscupstatecei.org/events).
 
 To scrape the websites, I use Selenium. The program runs at 07:00 AM Eastern Time on Monday's, Wednesday's and Friday's and is schedule to run on my local machine using [CRON](https://crontab.guru/).
 
