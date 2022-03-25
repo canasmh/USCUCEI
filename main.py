@@ -153,14 +153,14 @@ with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         for error in errors:
             msg += f"\n\n{error}"
     else:
-        msg += "No Errors were found"
+        msg += "\n\nNo errors were found."
 
     if len(wp.events_not_posted) != 0:
         msg += "\n\nThe following events may not have been posted:\n"
         for event in wp.events_not_posted:
-            msg += f"{event}\n"
+            msg += f"{event["title"]} on {event["date"]} @ {event["time"]}\n"
     else:
-        msg += "\n\nIt appears all events were successfully uploaded"
+        msg += "\n\nIt appears all events were successfully uploaded."
 
     msg += f"\n\nTotal Run Time: {minutes}m {seconds}s"
 
