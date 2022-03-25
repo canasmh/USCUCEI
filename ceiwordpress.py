@@ -186,7 +186,7 @@ class CEIWordPress(Driver):
 
             if not posted:
                 try:
-                    self.add_title("TEST " + title.upper())
+                    self.add_title(title.upper())
                     self.add_description(description, link)
                     self.add_start_date(date)
                     self.add_start_time(event_time)
