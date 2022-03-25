@@ -9,7 +9,6 @@ class EventsDB:
         self.db_name = 'events.db'
         self.table_name = 'events'
         self.events = events
-        self.events.sort(key=lambda item: datetime.strptime(item['Date'], "%B %d, %Y"))
         self.table_header = "(Title VARCHAR(100), Date VARCHAR(100), Time VARCHAR(100), Link VARCHAR(100), " \
                             "Description VARCHAR(2000), Posted BOOL, id INT NOT NULL, PRIMARY KEY (id)) "
         self.connection = None
