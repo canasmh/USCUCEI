@@ -13,7 +13,7 @@ import os
 
 load_dotenv()
 
-"Total Time Worked: 39hr40min"
+"Total Time Worked: 40hr00min"
 
 # For E-Mail
 sender_email = os.environ.get("SENDER_EMAIL")
