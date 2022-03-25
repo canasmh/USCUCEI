@@ -196,7 +196,11 @@ class CEIWordPress(Driver):
                     self.driver.execute_script("arguments[0].click();", publish_button)
                 except Exception as err:
                     print(f"Event not posted: {title.upper()}\n {err}")
-                    self.events_not_posted.append(title)
+                    self.events_not_posted.append({
+                        "title": title,
+                        "date": date,
+                        "time": event_time
+                    })
                     # restart the driver
                     self.driver.quit()
                     self.driver = webdriver.Chrome(service=self.service)
