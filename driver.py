@@ -5,6 +5,7 @@ import os
 
 
 class Driver:
+    """Class the initiates the web driver used for scraping"""
 
     def __init__(self):
         self.service = Service(ChromeDriverManager().install())
