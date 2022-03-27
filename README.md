@@ -9,6 +9,6 @@ It works by scraping four different websites, namely:
 
 These events are then published to the CEI's [Event Page](https://uscupstatecei.org/events).
 
-To scrape the websites, I use Selenium. The program runs at 07:00 AM Eastern Time on Monday's, Wednesday's and Friday's and is schedule to run on my local machine using [CRON](https://crontab.guru/).
+To scrape the websites, I use Selenium. The program runs at 06:10 AM Eastern Time on Monday's, Wednesday's and Friday's and is schedule to run on my local machine using [CRON](https://crontab.guru/).
 
 For more information, email me at [canasmh@yahoo.com](mailto:canasmh@yahoo.com)
