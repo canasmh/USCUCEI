@@ -114,7 +114,7 @@ print(f"{len(events)} Events scraped")
 
 print("Adding events to the database")
 try:
-    edb = EventsDB(events)
+    edb = EventsDB(events, 'events')
     edb.add_events()
 except Exception as err:
     errors.append(err)
