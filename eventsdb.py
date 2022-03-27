@@ -1,13 +1,13 @@
 import sqlite3
 from sqlite3 import Error
-from datetime import datetime
 
 
 class EventsDB:
+    """This class is in charged of uploading the events to a database."""
 
-    def __init__(self, events):
+    def __init__(self, events, table_name):
         self.db_name = '/Users/manny/Documents/Freelancing/USCUCEI/events.db'
-        self.table_name = 'events'
+        self.table_name = table_name
         self.events = events
         self.table_header = "(Title VARCHAR(100), Date VARCHAR(100), Time VARCHAR(100), Link VARCHAR(100), " \
                             "Description VARCHAR(2000), Posted BOOL, id INT NOT NULL, PRIMARY KEY (id)) "
@@ -15,6 +15,7 @@ class EventsDB:
         self.cursor = None
 
     def connect(self):
+        """This method establishes a connection with a database"""
 
         try:
             self.connection = sqlite3.connect(self.db_name)
@@ -22,6 +23,9 @@ class EventsDB:
             print(f"There was an error connecting:\n{err}")
 
     def create_cursor(self):
+        """This method creates a cursor for the database"""
+
+        # Make sure a connection is already established
         if self.connection is None:
             self.connect()
         try:
@@ -30,6 +34,7 @@ class EventsDB:
             print(f"There was an error creating cursor:\n{err}")
 
     def create_table(self):
+        """This method is in charged of creating a table within the database"""
 
         if self.cursor is None:
             self.create_cursor()
@@ -42,37 +47,48 @@ class EventsDB:
             print(f"There was an error creating table: {err}")
 
     def add_events(self):
+        """This is the main method in charged of adding events to the database."""
         if self.cursor is None:
             self.create_table()
 
         n_events_added = 0
+
+        # Start looping through events and creating the right syntax
         for item in self.events:
             new_event = "("
+
+            # Go through of the keys in an event
             for key in item.keys():
 
                 event = str(item[key])
+                # Replace special keys
                 event = event.replace("'", "&&&")
                 event = event.replace("\n", "&&n")
 
+                # Surround entry in single quotes
                 new_event += "'"
                 new_event += event
                 new_event += "'"
 
+                # Add commas for all entries except for the last one
                 if key != list(item.keys())[-1]:
                     new_event += ", "
 
+            # Loop through events in the database and check to see whether or not the event has already been uploaded
             repeated_event = False
             self.cursor.execute(f"SELECT Title, Date, Time, Link, Description FROM {self.table_name}")
             records = self.cursor.fetchall()
             if records:
                 data_id = len(records)
                 for record in records:
+                    # Only compare event details (L79) not the id or whether or not it has been posted posted
                     if str(record) == new_event + ")":
                         repeated_event = True
                         print("There is a repeated event")
             else:
                 data_id = 0
 
+            # If it is not a repeated event, then upload to database
             if not repeated_event:
                 try:
                     # This Posted column indicated whether or not event has already been posted to WordPress
@@ -84,6 +100,7 @@ class EventsDB:
                 except Error as err:
                     print(f"There was an error adding event: {err}")
 
+        # Print how many events were added
         if n_events_added == 0:
             print("No new events were added to database...")
         else:
@@ -92,6 +109,7 @@ class EventsDB:
         self.end_connection()
 
     def end_connection(self):
+        """This method is in charged of closing the connection to the database."""
 
         if self.connection is None:
             pass
@@ -215,7 +233,7 @@ if __name__ == "__main__":
                'Link': 'https://www.sccsc.edu/foundation/',
                'Description': 'Join us as Spartanburg Community College celebrates the impact that the college has on Students, Careers, and the Communities of Spartanburg, Union, and Cherokee counties. Hear from our President, Dr. Michael Mikota, and Gordy Johnson of Johnson Development and meet the NEW SCC mascot!'}]
 
-    edb = EventsDB(events)
+    edb = EventsDB(events, 'test')
     edb.create_table()
     edb.add_events()
     edb.end_connection()

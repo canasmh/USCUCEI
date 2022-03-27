@@ -5,6 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 
 def convert_date(event_date):
+    """This function converts a date from a string to a datetime object"""
     error = False
     event_date = event_date.replace(",", "")
     month_conversion = {
@@ -49,12 +50,14 @@ def convert_date(event_date):
 
 
 def format_date(date):
+    """This function converts a date thats formatted as MM/DD/YYYY to Month Day, Year"""
     date = convert_date(date)
 
     return date.strftime("%B %d, %Y")
 
 
 class GreenvilleChamber(Driver):
+    """ This class is in charge of scraping the Greenville Chambers of Commerce events page"""
 
     def __init__(self):
         super().__init__()
@@ -62,20 +65,19 @@ class GreenvilleChamber(Driver):
         self.name = "Greenville Chambers"
         self.events = []
 
-    def go_to_next_month(self):
-        next_button = self.driver.find_element(
-            By.CSS_SELECTOR, "a span.fa-chevron-circle-right")
-        next_button.click()
-
     def get_calendar_data(self):
+        """This function gets all of the items displayed on the calendar"""
         calendar = self.driver.find_elements(By.CSS_SELECTOR, "td.eventOn")
         return calendar
 
     def go_back(self):
+        """This function goes from the event page back to the calendar page"""
         go_back_button = self.driver.find_element(By.LINK_TEXT, "Go Back")
         go_back_button.click()
 
     def get_event_info(self, event_link):
+        """This function is in charge of getting the event title, date, time and description. Returns a dictionary with
+        title, date, time, link and description as keys."""
 
         try:
             event_title = self.driver.find_element(
@@ -116,40 +118,49 @@ class GreenvilleChamber(Driver):
         return event_dict
 
     def get_events(self):
+        """Main function used to scrape events."""
         self.driver.get(self.url)
 
+        # Scrape the following three months
         month = 0
         max_month = 3
 
         while month < max_month:
+            # Get the number of events for the month.
             day = 0
             n_days = len(self.get_calendar_data())
 
             while day < n_days - 1:
-                # This is a nested list. Each item in list is a day.
+                # Get all of the events in the month.
                 events_per_day = self.get_calendar_data()
 
-                # These are the events on the 'nth' day.
+                # Get all of the events on day 'day'.
                 events = events_per_day[day].find_elements(
                     By.CSS_SELECTOR, "a")
 
+                # If there are not any events in the day, move on.
                 if len(events) == 0:
                     day += 1
                     continue
                 else:
                     for i in range(len(events)):
+                        # Get event link and go to event page
                         event_link = events[i].get_property("href")
-
                         events[i].click()
+
+                        # Make the event dictionary
                         event_dict = self.get_event_info(event_link)
 
+                        # Check if the event has passed
                         if datetime.datetime.strptime(event_dict['Date'], "%B %d, %Y") < datetime.datetime.today():
                             self.go_back()
                             events_per_day = self.get_calendar_data()
                             events = events_per_day[day].find_elements(
                                 By.CSS_SELECTOR, "a")
+                            # If so, move on
                             continue
 
+                        # Go back to main page and append dictionary to events attribute.
                         self.go_back()
                         self.events.append(event_dict)
                         events_per_day = self.get_calendar_data()
@@ -157,6 +168,7 @@ class GreenvilleChamber(Driver):
                             By.CSS_SELECTOR, "a")
                     day += 1
 
+            # Go to the next month.
             next_month = self.driver.find_element(
                 By.XPATH, "//*[@id='calendarDetail']/table/tbody/tr[1]/td[3]/a")
             self.driver.execute_script("arguments[0].click();", next_month)
