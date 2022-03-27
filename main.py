@@ -130,12 +130,6 @@ except Exception as err:
             msg=msg
         )
 
-
-# Calculaute run time
-end_time = time.perf_counter()
-minutes = int((end_time - start_time) / 60)
-seconds = round((end_time - start_time) % 60, 2)
-
 print("Posting events to WordPress")
 wp = CEIWordPress()
 try:
@@ -153,6 +147,12 @@ except Exception as err:
             to_addrs=receiver_email,
             msg=msg
         )
+        
+
+# Calculaute run time
+end_time = time.perf_counter()
+minutes = int((end_time - start_time) / 60)
+seconds = round((end_time - start_time) % 60, 2)
 
 print(f"\nTotal Run Time: {minutes}m {seconds}s")
 
