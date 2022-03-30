@@ -21,6 +21,7 @@ class CEIWordPress(Driver):
         self.connection = sqlite3.connect(self.db_name)
         self.cursor = self.connection.cursor()
         self.events_not_posted = []
+        self.events_posted = []
 
     def login(self):
         """This method logs in to the WordPress page as an admin"""
@@ -225,9 +226,9 @@ class CEIWordPress(Driver):
                     # move on to next event.
                     print(f"Event not posted: {title.upper()}\n {err}")
                     self.events_not_posted.append({
-                        "title": title,
-                        "date": date,
-                        "time": event_time
+                        "Title": title,
+                        "Date": date,
+                        "Time": event_time
                     })
                     # restart the driver
                     self.driver.quit()
@@ -239,6 +240,11 @@ class CEIWordPress(Driver):
                 else:
                     # If successful, append id to to list and move return to add new event page
                     print(f"Event Published: {title}")
+                    self.events_posted.append({
+                        "Title": title,
+                        "Date": date,
+                        "Time": event_time
+                    })
                     ids_of_posted_events.append(id)
                     time.sleep(3)
                     self.go_to_add_event_page()
