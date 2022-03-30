@@ -13,6 +13,7 @@ class EventsDB:
                             "Description VARCHAR(2000), Posted BOOL, id INT NOT NULL, PRIMARY KEY (id)) "
         self.connection = None
         self.cursor = None
+        self.new_events = 0
 
     def connect(self):
         """This method establishes a connection with a database"""
@@ -50,8 +51,6 @@ class EventsDB:
         """This is the main method in charged of adding events to the database."""
         if self.cursor is None:
             self.create_table()
-
-        n_events_added = 0
 
         # Start looping through events and creating the right syntax
         for item in self.events:
@@ -95,16 +94,16 @@ class EventsDB:
                     new_event += f", '0', '{data_id}')"
                     self.cursor.execute(f"INSERT INTO {self.table_name} VALUES {new_event}")
                     self.connection.commit()
-                    n_events_added += 1
+                    self.new_events += 1
 
                 except Error as err:
                     print(f"There was an error adding event: {err}")
 
         # Print how many events were added
-        if n_events_added == 0:
+        if self.new_events == 0:
             print("No new events were added to database...")
         else:
-            print(f"{n_events_added} Total events added to database")
+            print(f"{self.new_events} Total events added to database")
 
         self.end_connection()
 
