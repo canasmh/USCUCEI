@@ -113,8 +113,8 @@ except Exception as err:
 print(f"{len(events)} Events scraped")
 
 print("Adding events to the database")
+edb = EventsDB(events, 'events')
 try:
-    edb = EventsDB(events, 'events')
     edb.add_events()
 except Exception as err:
     errors.append(err)
@@ -161,24 +161,43 @@ with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
     msg = f"Subject: WEBSCRAPER STATUS REPORT\n\n"
 
     # Include the date and time the code ran
-    msg += f"WebScraper ran on {runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n"
+    msg += f"WebScraper ran on {runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n\n"
     # TODO: Include Number events scraped and number of events posted in final
+
+    msg += f"{len(events)} Total events scraped.\n"
+    msg += f"{edb.new_events} New events were added to the database.\n\n"
+
+
 
     # Include errors that were presented (if any)
     if len(errors) != 0:
-        msg += "\n\nThe following errors were found:"
+        msg += "The following errors were found:\n\n"
         for error in errors:
-            msg += f"\n\n{error}"
+            msg += f"{error}\n\n"
     else:
-        msg += "\n\nNo errors were found."
+        msg += "No errors were found.\n\n"
+
+    if len(wp.events_posted) != 0:
+        msg += "The Following events were posted to the database:\n\n"
+        for item in wp.events_posted:
+            for key in item.keys():
+                msg += f"{key}: {item[key]}\n"
+
+            msg += "\n"
+
+        msg += "\n"
 
     # Include the events that may possibly not have been posted (if any)
     if len(wp.events_not_posted) != 0:
-        msg += "\n\nThe following events may not have been posted:\n"
-        for event in wp.events_not_posted:
-            msg += f"{event["title"]} on {event["date"]} @ {event["time"]}\n"
-    else:
-        msg += "\n\nIt appears all events were successfully uploaded."
+        msg += "The following events may not have been posted:\n\n"
+        for item in wp.events_not_posted:
+            for key in item.keys():
+                msg += f"{key}: {item[key]}\n"
+
+            msg += "\n"
+
+    elif len(wp.events_posted) != 0:
+        msg += "It appears all events were successfully uploaded.\n\n\n"
 
     msg += f"\n\nTotal Run Time: {minutes}m {seconds}s"
 
