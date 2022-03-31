@@ -199,7 +199,7 @@ with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
     elif len(wp.events_posted) != 0:
         msg += "It appears all events were successfully uploaded.\n\n\n"
 
-    msg += f"\n\nTotal Run Time: {minutes}m {seconds}s"
+    msg += f"Total Run Time: {minutes}m {seconds}s"
 
     connection.starttls()
     connection.login(user=sender_email, password=password)
