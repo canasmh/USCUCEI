@@ -40,7 +40,8 @@ except Exception as err:
     print(f"There was an error scraping {gc.name}:\n{err}")
     # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
-        msg = f"Subject: ERROR SCRAPING {gc.name.upper()}\n\nError Message:\n{err}"
+        msg = f"Subject: ERROR SCRAPING {gc.name.upper()}\n\n"
+        msg += f"{runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n\nError Message:\n{err}"
         connection.starttls()
         connection.login(user=sender_email, password=password)
         connection.sendmail(
@@ -60,7 +61,8 @@ except Exception as err:
     print(f"There was an error scraping {sa.name}:\n{err}")
     # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
-        msg = f"Subject: ERROR SCRAPING {sa.name.upper()}\n\nError Message:\n{err}"
+        msg = f"Subject: ERROR SCRAPING {sa.name.upper()}\n\n"
+        msg += f"{runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n\nError Message:\n{err}"
         connection.starttls()
         connection.login(user=sender_email, password=password)
         connection.sendmail(
@@ -80,7 +82,8 @@ except Exception as err:
     print(f"There was an error scraping {scra.name}:\n{err}")
     # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
-        msg = f"Subject: ERROR SCRAPING {scra.name.upper()}\n\nError Message:\n{err}"
+        msg = f"Subject: ERROR SCRAPING {scra.name.upper()}\n\n"
+        msg += f"{runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n\nError Message:\n{err}"
         connection.starttls()
         connection.login(user=sender_email, password=password)
         connection.sendmail(
@@ -100,7 +103,8 @@ except Exception as err:
     print(f"There was an error scraping {sgu.name}:\n{err}")
     # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
-        msg = f"Subject: ERROR SCRAPING {sgu.name.upper()}\n\nError Message:\n{err}"
+        msg = f"Subject: ERROR SCRAPING {sgu.name.upper()}\n\n"
+        msg += f"{runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n\nError Message:\n{err}"
         connection.starttls()
         connection.login(user=sender_email, password=password)
         connection.sendmail(
@@ -121,7 +125,8 @@ except Exception as err:
     print(f"There was an error uploading events to database:\n{err}")
     # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
-        msg = f"Subject: ERROR ADDING EVENT TO DATABASE\n\nError Message:\n{err}"
+        msg = f"Subject: ERROR ADDING EVENT TO DATABASE\n\n"
+        msg += f"{runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n\nError Message:\n{err}"
         connection.starttls()
         connection.login(user=sender_email, password=password)
         connection.sendmail(
@@ -139,7 +144,8 @@ except Exception as err:
     print(f"There was an error posting events to wordpress:\n{err}")
     # Send E-mail in case of error
     with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
-        msg = f"Subject: ERROR POSTING EVENT TO WORDPRESS\n\nError Message:\n{err}"
+        msg = f"Subject: ERROR POSTING EVENT TO WORDPRESS\n\n"
+        msg += f"{runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n\nError Message:\n{err}"
         connection.starttls()
         connection.login(user=sender_email, password=password)
         connection.sendmail(
@@ -162,12 +168,9 @@ with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
 
     # Include the date and time the code ran
     msg += f"WebScraper ran on {runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n\n"
-    # TODO: Include Number events scraped and number of events posted in final
 
     msg += f"{len(events)} Total events scraped.\n"
     msg += f"{edb.new_events} New events were added to the database.\n\n"
-
-
 
     # Include errors that were presented (if any)
     if len(errors) != 0:
@@ -208,6 +211,3 @@ with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         to_addrs=receiver_email,
         msg=msg
     )
-
-
-
