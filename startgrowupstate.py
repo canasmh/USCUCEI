@@ -31,7 +31,7 @@ class StartGrowUpstate(Driver):
         self.driver.switch_to.frame(calendar_object)
 
         # Make sure you're scraping today's calendar
-        today_btn = self.driver.find_element(By.XPATH, '//*[@id="calendarView"]/div/div/div[1]/div[1]')
+        today_btn = self.driver.find_element(By.XPATH, '//*[@id="calendarView"]/div/div/div[1]/div[2]/div[1]')
         today_btn.click()
 
         n = 0
