@@ -203,11 +203,18 @@ with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         msg += "It appears all events were successfully uploaded.\n\n\n"
 
     msg += f"Total Run Time: {minutes}m {seconds}s"
+    try:
+        connection.starttls()
+        connection.login(user=sender_email, password=password)
+        connection.sendmail(
+            from_addr=sender_email,
+            to_addrs=receiver_email,
+            msg=msg
+        )
+    except UnicodeEncodeError as err:
+        print(f"Unicode Encode Error: {err}")
+        print(f"Email Message:\n{msg}")
 
-    connection.starttls()
-    connection.login(user=sender_email, password=password)
-    connection.sendmail(
-        from_addr=sender_email,
-        to_addrs=receiver_email,
-        msg=msg
-    )
+    except Exception as err:
+        print(f"Unidentified err: {err}")
+        print(f"Email Message:\n{msg}")
