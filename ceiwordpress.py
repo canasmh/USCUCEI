@@ -211,13 +211,13 @@ class CEIWordPress(Driver):
 
             if not posted:
                 # Try posting an event
-                self.add_title(title.upper())
-                self.add_description(description, link)
-                self.add_start_date(date)
-                self.add_start_time(event_time)
-                self.add_end_date(date)
-                self.add_end_time(event_time)
                 try:
+                    self.add_title(title.upper())
+                    self.add_description(description, link)
+                    self.add_start_date(date)
+                    self.add_start_time(event_time)
+                    self.add_end_date(date)
+                    self.add_end_time(event_time)
                     publish_button = self.driver.find_element(By.XPATH, '//*[@id="publish"]')
                     self.driver.execute_script("arguments[0].click();", publish_button)
 
@@ -228,7 +228,8 @@ class CEIWordPress(Driver):
                     self.events_not_posted.append({
                         "Title": title,
                         "Date": date,
-                        "Time": event_time
+                        "Time": event_time,
+                        "Description": description
                     })
                     # restart the driver
                     self.driver.quit()
@@ -243,7 +244,8 @@ class CEIWordPress(Driver):
                     self.events_posted.append({
                         "Title": title,
                         "Date": date,
-                        "Time": event_time
+                        "Time": event_time,
+                        "Description": description
                     })
                     ids_of_posted_events.append(id)
                     time.sleep(3)
