@@ -100,6 +100,7 @@ class CEIWordPress(Driver):
                 day.click()
 
     def add_start_time(self, event_time):
+
         """This method selects the correct start time of the event (if any)."""
         if event_time == "N/A":
             self.driver.find_element(By.XPATH, '// *[ @ id = "mec_hide_time"]').click()
@@ -108,9 +109,13 @@ class CEIWordPress(Driver):
             start_time_hr_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_hour option")
 
             # Loop through all the hour options until you find the correct hour
-            for start_time in start_time_hr_options:
+            try:
                 start, end = event_time.split(' - ')
+            except ValueError or IndexError:
+                start = event_time
 
+            for start_time in start_time_hr_options:
+                
                 # if the hour matches the time in the database, click on that one.
                 if start_time.text == start.split(':')[0]:
                     start_time.click()
@@ -120,7 +125,6 @@ class CEIWordPress(Driver):
 
             # Loop through all the minute options until you find the correct minute
             for start_time in start_time_min_options:
-                start, end = event_time.split(' - ')
                 min = start.split(':')[1]
 
                 if start_time.text == min[0:2]:
@@ -128,10 +132,8 @@ class CEIWordPress(Driver):
                     break
 
             start_time_ampm_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_start_ampm option")
-
             # Select either AM or PM
             for ampm in start_time_ampm_options:
-                start, end = event_time.split(' - ')
                 min = start.split(':')[1]
 
                 if str(ampm.text).lower() == min[len(min) - 2: len(min)].lower():
@@ -146,40 +148,41 @@ class CEIWordPress(Driver):
             hide_time_button = self.driver.find_element(By.XPATH, '//*[@id="mec_hide_time"]')
             hide_time_button.click()
         # Make sure end time is specified
-        elif event_time.split(' - ')[1] == 'Not Specified':
-            # Hide Event Time
-            self.driver.find_element(By. XPATH, '//*[@id="mec_hide_end_time"]').click()
-
         else:
-            # Select the right hour for the end time
-            for end_time in end_time_hr_options:
+            try:
+                event_time.split(' - ')[1]
+            except IndexError or ValueError: 
+            # Hide Event Time
+                self.driver.find_element(By. XPATH, '//*[@id="mec_hide_end_time"]').click()
+
+            else:
+                # Select the right hour for the end time
                 start, end = event_time.split(' - ')
+                for end_time in end_time_hr_options:
 
-                if end_time.text == end.split(':')[0]:
-                    end_time.click()
-                    break
+                    if end_time.text == end.split(':')[0]:
+                        end_time.click()
+                        break
 
-            start_time_min_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_minutes option")
+                start_time_min_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_minutes option")
 
-            # Select the right minute for the end time
-            for end_time in start_time_min_options:
-                start, end = event_time.split(' - ')
-                min = end.split(':')[1]
+                # Select the right minute for the end time
+                for end_time in start_time_min_options:
+                    min = end.split(':')[1]
 
-                if end_time.text == min[0:2]:
-                    end_time.click()
-                    break
+                    if end_time.text == min[0:2]:
+                        end_time.click()
+                        break
 
-            start_time_ampm_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_ampm option")
+                start_time_ampm_options = self.driver.find_elements(By.CSS_SELECTOR, "#mec_end_ampm option")
 
-            # Select whether you're in am or pm
-            for ampm in start_time_ampm_options:
-                start, end = event_time.split(' - ')
-                min = end.split(':')[1]
+                # Select whether you're in am or pm
+                for ampm in start_time_ampm_options:
+                    min = end.split(':')[1]
 
-                if str(ampm.text).lower() == min[len(min) - 2: len(min)].lower():
-                    ampm.click()
-                    break
+                    if str(ampm.text).lower() == min[len(min) - 2: len(min)].lower():
+                        ampm.click()
+                        break
 
     def post_events(self):
         """Main method in charge of posting the events to WordPress"""
