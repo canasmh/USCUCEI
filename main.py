@@ -170,7 +170,7 @@ with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
     msg += f"WebScraper ran on {runtime.date().strftime('%B %d, %Y')} @ {runtime.hour}:{runtime.minute}\n\n"
 
     msg += f"{len(events)} Total events scraped.\n"
-    msg += f"{edb.new_events} New events were added to the database.\n\n"
+    # msg += f"{edb.new_events} New events were added to the database.\n\n"
 
     # Include errors that were presented (if any)
     if len(errors) != 0:
@@ -209,7 +209,7 @@ with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
         connection.sendmail(
             from_addr=sender_email,
             to_addrs=receiver_email,
-            msg=msg
+            msg=msg.encode('utf-8', 'ignore').decode('utf-8')
         )
     except UnicodeEncodeError as err:
         print(f"Unicode Encode Error: {err}")

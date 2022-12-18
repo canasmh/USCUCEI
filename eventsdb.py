@@ -78,7 +78,7 @@ class EventsDB:
             self.cursor.execute(f"SELECT Title, Date, Time, Link, Description FROM {self.table_name}")
             records = self.cursor.fetchall()
             if records:
-                data_id = len(records)
+                data_id = len(records) + 2  # I deleted two events
                 for record in records:
                     # Only compare event details (L79) not the id or whether or not it has been posted posted
                     if str(record) == new_event + ")":

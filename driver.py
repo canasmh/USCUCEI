@@ -9,7 +9,7 @@ class Driver:
     def __init__(self):
         self.service = Service(ChromeDriverManager().install())
         chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--headless')
+#        chrome_options.add_argument('--headless')
         self.driver = webdriver.Chrome(service=self.service, options=chrome_options)
 
         
