@@ -89,13 +89,52 @@ class StartGrowUpstate(Driver):
             link = link_to_event_page.get_attribute("href")
             self.driver.get(link)
             self.driver.switch_to.window(self.driver.window_handles[0])
-            print("Second window title = " + self.driver.title)
+            time.sleep(2)
+
+            title = self.driver.find_element(By.TAG_NAME, "h3")
+
+            new_event['Title'] = title.text.strip()
+
+            try: 
+                text_container = self.driver.find_element(By.XPATH, "/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div[2]")
+            except NoSuchElementException:
+                text_container = self.driver.find_element(By.XPATH, "/html/body/div[2]/div[1]/div[2]/div[1]/div[2]/div[2]")
+            
+            text_elements = text_container.find_elements(By.CLASS_NAME, "Text")
+            
+
+            key = None
+            for t_element in text_elements:
+
+                if t_element.text.strip().lower() == "about this event":
+                    key = 'Description'
+                    continue
+
+                elif t_element.text.strip().lower() == "date":    
+                    key ='Date'
+                    continue
+                
+                if key is None:
+                    print("no key... ")
+                    continue
+                    
+                elif key == "Date":
+                    event_date = t_element.text.split(" - ")[0].strip()
+                    new_event[key] += format_date(event_date)
+                    
+                else:
+                    new_event[key] += t_element.text.strip()
+            
+            print(new_event)
+            print("")
+
+            # print("\nSecond window title = " + self.driver.title)
             back_button = self.driver.find_element(By.LINK_TEXT, "Back to the Events Directory")
             back_button.click()
             self.driver.switch_to.window(self.driver.window_handles[0])
-            print("Second window title = " + self.driver.title)
+            # print("\nFirst window title = " + self.driver.title)
             i += 1
-            print("i: ", i)
+            # print("i: ", i)
 
         sys.exit()
 
