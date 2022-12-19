@@ -12,10 +12,24 @@ import time
 def format_date(event_date):
     """Convert date from string to datetime object"""
 
-    month, day, year = event_date.split("/")
-    event_date = datetime.date(int(year), int(month), int(day))
+    convert_month = {
+        'Jan': 1,
+        'Feb': 2,
+        'Mar': 3,
+        'Apr': 4,
+        'May': 5,
+        'Jun': 6,
+        'Jul': 7,
+        'Aug': 8,
+        'Sep': 9,
+        'Oct': 10,
+        'Nov': 11,
+        'Dec': 12
+    }
 
-    return event_date
+    event_date = datetime.date(int(event_date[-4:]), convert_month[event_date[0:3]], int(event_date[4:6]))
+
+    return event_date.strftime("%B %d, %Y")
 
 
 class StartGrowUpstate(Driver):
