@@ -41,7 +41,7 @@ class StartGrowUpstate(Driver):
         time.sleep(5)
         n_events_div = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div[1]/div/div[1]/h3/div")
         n_events = int(n_events_div.text.split(" ")[0])
-        print(n_events, type(n_events))
+        print(f"Number of events: {n_events}")
 
         i = 1
         while i <= n_events:
