@@ -36,7 +36,46 @@ class StartGrowUpstate(Driver):
     def get_events(self):
         """Method in charge of scraping the events."""
         self.driver.get(self.url)
-        calendar_object = self.driver.find_element(By.TAG_NAME, "iframe")
+
+        # GET THE NUMBER OF EVENTS
+        time.sleep(5)
+        n_events_div = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div[1]/div/div[1]/h3/div")
+        n_events = int(n_events_div.text.split(" ")[0])
+        print(n_events, type(n_events))
+
+        i = 1
+        while i <= n_events:
+            self.load_lazy()
+
+            """
+            COMMENT: This page is very verrryyy interesting. Theres a total of like 10 classes used through out the whole thing
+            and there aren't very many unique edintifiers for the elements I need access to...
+
+            So I'm getting the calendar_container using XPATH, and then getting calendar items, children of calendar_container.
+
+            The problem is, that the XPath to the container... changes ? 🤔 so thats what the following try block checks..
+            
+            """
+            try:
+                calendar_container = self.driver.find_element(By.XPATH, f"/html/body/div[1]/div/div/div[3]")
+                calendar_item = calendar_container.find_elements(By.CLASS_NAME, f"GroupItem")[i - 1]
+            except (IndexError, NoSuchElementException):
+                calendar_container = self.driver.find_element(By.XPATH, f"/html/body/div[2]/div/div/div[3]")
+                calendar_item = calendar_container.find_elements(By.CLASS_NAME, f"GroupItem")[i - 1]
+            link_to_event_page = calendar_item.find_element(By.TAG_NAME, "a")
+            link = link_to_event_page.get_attribute("href")
+            self.driver.get(link)
+            self.driver.switch_to.window(self.driver.window_handles[0])
+            print("Second window title = " + self.driver.title)
+            back_button = self.driver.find_element(By.LINK_TEXT, "Back to the Events Directory")
+            back_button.click()
+            self.driver.switch_to.window(self.driver.window_handles[0])
+            print("Second window title = " + self.driver.title)
+            i += 1
+            print("i: ", i)
+
+        sys.exit()
+
         self.driver.switch_to.frame(calendar_object)
 
         # Make sure you're scraping today's calendar
