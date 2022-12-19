@@ -2,8 +2,11 @@ import datetime
 
 from driver import Driver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from datetime import date
+import sys
+import time
 
 
 def format_date(event_date):
@@ -18,11 +21,17 @@ def format_date(event_date):
 class StartGrowUpstate(Driver):
     """Class in charged of scraping the StartGrowUpstate Event calendar"""
 
-    def __init__(self):
+    def __init__(self, n_scrolls=200):
         super().__init__()
-        self.url = "https://www.startgrowupstate.com/explore-events"
+        self.url = "https://www.startgrowupstate.com/events"
         self.name = "Start Grow Upstate"
         self.events = []
+        self.n_scrolls = n_scrolls
+
+    def load_lazy(self):
+        html_body = self.driver.find_element(By.TAG_NAME, "body")
+        for _ in range(self.n_scrolls):
+            html_body.send_keys(Keys.PAGE_DOWN)
 
     def get_events(self):
         """Method in charge of scraping the events."""
