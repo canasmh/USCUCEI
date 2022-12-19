@@ -61,6 +61,15 @@ class StartGrowUpstate(Driver):
         while i <= n_events:
             self.load_lazy()
 
+            new_event = {
+                'Title': '',
+                'Date': '',
+                'Time': 'N/A',
+                'Link': '',
+                'Description': '',
+                'Link': ''
+            }
+
             """
             COMMENT: This page is very verrryyy interesting. Theres a total of like 10 classes used through out the whole thing
             and there aren't very many unique edintifiers for the elements I need access to...
