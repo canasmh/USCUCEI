@@ -233,6 +233,4 @@ if __name__ == "__main__":
                'Description': 'Join us as Spartanburg Community College celebrates the impact that the college has on Students, Careers, and the Communities of Spartanburg, Union, and Cherokee counties. Hear from our President, Dr. Michael Mikota, and Gordy Johnson of Johnson Development and meet the NEW SCC mascot!'}]
 
     edb = EventsDB(events, 'test')
-    edb.create_table()
     edb.add_events()
-    edb.end_connection()
