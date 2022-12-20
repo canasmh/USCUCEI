@@ -1,11 +1,8 @@
-import datetime
-
 from driver import Driver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from datetime import date
-import sys
 import time
 
 
@@ -27,7 +24,7 @@ def format_date(event_date):
         'Dec': 12
     }
 
-    event_date = datetime.date(int(event_date[-4:]), convert_month[event_date[0:3]], int(event_date[4:6]))
+    event_date = date(int(event_date[-4:]), convert_month[event_date[0:3]], int(event_date[4:6]))
 
     return event_date.strftime("%B %d, %Y")
 
@@ -46,6 +43,7 @@ class StartGrowUpstate(Driver):
         html_body = self.driver.find_element(By.TAG_NAME, "body")
         for _ in range(self.n_scrolls):
             html_body.send_keys(Keys.PAGE_DOWN)
+            time.sleep(0.01)
 
     def get_events(self):
         """Method in charge of scraping the events."""
@@ -67,7 +65,6 @@ class StartGrowUpstate(Driver):
                 'Time': 'N/A',
                 'Link': '',
                 'Description': '',
-                'Link': ''
             }
 
             """
@@ -82,7 +79,8 @@ class StartGrowUpstate(Driver):
             try:
                 calendar_container = self.driver.find_element(By.XPATH, f"/html/body/div[1]/div/div/div[3]")
                 calendar_item = calendar_container.find_elements(By.CLASS_NAME, f"GroupItem")[i - 1]
-            except (IndexError, NoSuchElementException):
+            except (IndexError, NoSuchElementException) as e:
+                print(e)
                 calendar_container = self.driver.find_element(By.XPATH, f"/html/body/div[2]/div/div/div[3]")
                 calendar_item = calendar_container.find_elements(By.CLASS_NAME, f"GroupItem")[i - 1]
             link_to_event_page = calendar_item.find_element(By.TAG_NAME, "a")
@@ -125,105 +123,17 @@ class StartGrowUpstate(Driver):
                 else:
                     new_event[key] += t_element.text.strip()
             
+
+            link_to_event_info = self.driver.find_element(By.LINK_TEXT, "Visit Website for More")
+            new_event['Link'] = link_to_event_info.get_attribute("href")
+            self.events.append(new_event)
             print(new_event)
             print("")
 
-            # print("\nSecond window title = " + self.driver.title)
             back_button = self.driver.find_element(By.LINK_TEXT, "Back to the Events Directory")
             back_button.click()
             self.driver.switch_to.window(self.driver.window_handles[0])
-            # print("\nFirst window title = " + self.driver.title)
             i += 1
-            # print("i: ", i)
-
-        sys.exit()
-
-        self.driver.switch_to.frame(calendar_object)
-
-        # Make sure you're scraping today's calendar
-        today_btn = self.driver.find_element(By.XPATH, '//*[@id="calendarView"]/div/div/div[1]/div[2]/div[1]')
-        today_btn.click()
-
-        n = 0
-        # Get all of the events
-        events = self.driver.find_elements(By.CSS_SELECTOR, ".calendarRecord")
-
-        # Get the total number events
-        n_events = len(events)
-        # Got to event page
-        events[n].click()
-        while n < n_events:
-            # Get event title
-            title = self.driver.find_element(
-                By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[1]/div[2]/div/div/div'
-            ).text
-
-            # Get event date
-            event_date = self.driver.find_element(
-                By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[2]/div[2]/div/div/div/div/div[1]/div'
-            ).text
-
-            event_date = format_date(event_date)
-
-            # Check if event has already passed
-            if event_date < date.today():
-                n += 1
-                next_event_button = self.driver.find_element(
-                    By.XPATH,
-                    '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[1]/div/div/div/div[1]/div[3]'
-                )
-                next_event_button.click()
-                continue
-
-            # Get event description
-            description = self.driver.find_element(
-                By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[7]/div[2]/div/div/div/div/div[1]'
-            ).text
-
-            # Get event start time
-            start_time = self.driver.find_element(
-                By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div'
-            ).text
-
-            # Get event end time (if any)
-            try:
-                end_time = self.driver.find_element(
-                    By.XPATH,
-                    '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[3]/div[2]/div/div/div/div/div[2]/div'
-                ).text
-            except NoSuchElementException:
-                end_time = "Not Specified"
-
-            # Get event link
-            link_button = self.driver.find_element(
-                By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[2]/div/div[2]/div/div/div[1]/div[5]/div[2]/div/div/div/a'
-            )
-
-            link = link_button.get_attribute("href")
-
-            event_dict = {
-                "Title": title,
-                "Date": event_date.strftime("%B %d, %Y"),
-                "Time": start_time + " - " + end_time,
-                "Link": link,
-                "Description": description
-            }
-
-            print(event_dict)
-            self.events.append(event_dict)
-
-            # Go to next event.
-            next_event_button = self.driver.find_element(
-                By.XPATH,
-                '//*[@id="hyperbaseContainer"]/div[15]/div/div/div/div/div[1]/div/div/div/div[1]/div[3]'
-            )
-            next_event_button.click()
-            n += 1
 
         self.driver.quit()
 
@@ -231,3 +141,5 @@ class StartGrowUpstate(Driver):
 if __name__ == "__main__":
     sgu = StartGrowUpstate()
     sgu.get_events()
+    edb = EventsDB(sgu.events, 'test')
+    edb.add_events()
